@@ -9,6 +9,7 @@ import { Permission } from './entity/permission.entity';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { Otp } from './entity/otp.entity';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { Otp } from './entity/otp.entity';
 
     }),
     AuthModule,
-    MailModule
+    MailModule,
+    SeedModule
 
   ],
   controllers: [AppController],
