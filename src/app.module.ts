@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -10,6 +10,9 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { Otp } from './entity/otp.entity';
 import { SeedModule } from './seed/seed.module';
+import { IpModule } from './ip/ip.module';
+import { Ip } from './entity/ip.entity';
+import { IpTracker } from './middleware/ipTracker.middleware';
 
 @Module({
   imports: [
@@ -24,15 +27,24 @@ import { SeedModule } from './seed/seed.module';
       port: +process.env.DB_PORT!,
       password: process.env.DB_PASS,
       username: process.env.DB_USER,
-      entities: [User, Role, Permission, Otp]
+      entities: [User, Role, Permission, Otp, Ip]
 
     }),
     AuthModule,
     MailModule,
-    SeedModule
+    SeedModule,
+    IpModule
 
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+
+  configure(consumer: MiddlewareConsumer) {
+    
+    consumer.apply(IpTracker).forRoutes("*")
+
+  }
+
+}
