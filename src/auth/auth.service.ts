@@ -9,6 +9,8 @@ import { Permission } from '../entity/permission.entity';
 import { Otp } from '../entity/otp.entity';
 import { OtpVerificationDto } from './dto/otpVerification.dto';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './dto/login.dto';
+import bcrypt from "bcrypt";
 
 @Injectable()
 export class AuthService {
@@ -42,6 +44,45 @@ export class AuthService {
 
         // Sending Otp
         this.mailService.sendOtp(data.email, otp);
+
+        return;
+
+    }
+
+    async login (data: LoginDto) {
+
+        // User Existing Check And Checking It's Verification
+        const user = await this.userRepo.findOne({ where: { username: data.username } });
+        if (!user) throw new NotFoundException("User Not Found!");
+        if (user.is_verified) throw new BadRequestException("User is already login!");
+
+        // Password Checking
+        const hashedPassword = user.password;
+        const checkPassword = await bcrypt.compare(data.password, hashedPassword);
+        if (!checkPassword) throw new BadRequestException("Username or Password are wrong!");
+
+        // Generate Otp And Save It
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const newOtp = this.otpRepo.create({ otp, user, expiresAt: new Date(Date.now() + 2 * 60 * 1000) });
+        await this.otpRepo.save(newOtp);
+
+        // Sending Otp Code To Email
+        this.mailService.sendOtp(user.email, otp);
+        return;
+        
+    }
+
+    async logout (request: Request) {
+
+        // Checking User Existing And Check It's Verification
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+        if (!user.is_verified) throw new BadRequestException("User is already logout!");
+
+        // Logging Out User
+        user.is_verified = false;
+        await this.userRepo.save(user);
 
         return;
 

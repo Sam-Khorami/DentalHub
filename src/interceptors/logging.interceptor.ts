@@ -13,7 +13,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
             tap(() => {
 
-                return console.log(`Process Time is ${Date.now() - now}`);
+                return console.log(`Process Time is +${Date.now() - now}ms`);
 
             })
 
