@@ -13,6 +13,7 @@ import { SeedModule } from './seed/seed.module';
 import { IpModule } from './ip/ip.module';
 import { Ip } from './entity/ip.entity';
 import { IpTracker } from './middleware/ipTracker.middleware';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { IpTracker } from './middleware/ipTracker.middleware';
     AuthModule,
     MailModule,
     SeedModule,
-    IpModule
+    IpModule,
+    TasksModule
 
   ],
   controllers: [AppController],
