@@ -54,7 +54,7 @@ export class AuthService {
         // User Existing Check And Checking It's Verification
         const user = await this.userRepo.findOne({ where: { username: data.username } });
         if (!user) throw new NotFoundException("User Not Found!");
-        if (user.is_verified) throw new BadRequestException("User is already login!");
+        if (!user.is_email_verified) throw new BadRequestException("User needs to signup again!");
 
         // Password Checking
         const hashedPassword = user.password;
@@ -94,9 +94,6 @@ export class AuthService {
         const user = await this.userRepo.findOne({ where: { username: data.username }, relations: { roles: true } });
         if (!user) throw new NotFoundException("User Not Found!");
 
-        // Checking User Verification
-        if (user.is_verified) throw new BadRequestException("User is verified already!");
-
         // Checking Otp Exsiting
         const otp = await this.otpRepo.findOne({ where: { user: { username: data.username }, otp: data.otp } });
         if (!otp) throw new NotFoundException("Otp Not Found!");
@@ -107,6 +104,7 @@ export class AuthService {
 
         // Generate Token & Change Tables Datas
         const token = this.jwtService.sign({ username: user.username, userId: user.id, role: user.role });
+        user.is_email_verified = true
         user.is_verified = true;
         otp.isExpired = true;
 

@@ -15,6 +15,8 @@ import { Ip } from './entity/ip.entity';
 import { IpTracker } from './middleware/ipTracker.middleware';
 import { TasksModule } from './tasks/tasks.module';
 import { UsersModule } from './users/users.module';
+import { ProfileModule } from './profile/profile.module';
+import { Profile } from './entity/profile.entity';
 
 @Module({
   imports: [
@@ -29,7 +31,7 @@ import { UsersModule } from './users/users.module';
       port: +process.env.DB_PORT!,
       password: process.env.DB_PASS,
       username: process.env.DB_USER,
-      entities: [User, Role, Permission, Otp, Ip]
+      entities: [User, Role, Permission, Otp, Ip, Profile]
 
     }),
     AuthModule,
@@ -37,7 +39,8 @@ import { UsersModule } from './users/users.module';
     SeedModule,
     IpModule,
     TasksModule,
-    UsersModule
+    UsersModule,
+    ProfileModule
 
   ],
   controllers: [AppController],
