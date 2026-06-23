@@ -39,5 +39,6 @@ import { Otp } from '../entity/otp.entity';
   
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
+  exports: [AuthService]
 })
 export class AuthModule {}

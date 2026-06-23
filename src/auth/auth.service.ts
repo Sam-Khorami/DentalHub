@@ -43,13 +43,13 @@ export class AuthService {
         await this.otpRepo.save(newOtp);
 
         // Sending Otp
-        this.mailService.sendOtp(data.email, otp);
+        await this.mailService.sendOtp(data.email, otp);
 
         return;
 
     }
 
-    async login (data: LoginDto) {
+    async login (data: LoginDto, request: Request) {
 
         // User Existing Check And Checking It's Verification
         const user = await this.userRepo.findOne({ where: { username: data.username } });
@@ -115,6 +115,33 @@ export class AuthService {
 
         // Returning Token
         return token;
+
+    }
+
+    async getPermissions (userId: number) {
+
+        const permissions = new Set<string>();
+
+        // Finding User And Add thier permissions
+        const user = await this.userRepo.findOne({ where: { id: userId }, relations: { roles: { permissions: true }, permissions: true } });
+        user?.permissions.forEach((val) => {
+
+            permissions.add(val.name);
+
+        });
+
+        user?.roles.forEach((val) => {
+
+            val.permissions.forEach((value) => {
+
+                permissions.add(value.name);
+
+            });
+
+        })
+
+        // Returing The Array Insted Of Object
+        return Array.from(permissions);
 
     }
 

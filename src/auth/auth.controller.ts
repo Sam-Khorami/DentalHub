@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SigninDto } from './dto/signin.dto';
@@ -24,9 +24,9 @@ export class AuthController {
 
   @ApiOperation({ summary: "Login", description: "With this api you can login to your account" })
   @Post("login")
-  async login (@Body() data: LoginDto) {
+  async login (@Body() data: LoginDto, @Req() request: Request) {
 
-    await this.authService.login(data);
+    await this.authService.login(data, request);
     return { message: "Otp Code Sent For You Successfully!" }
 
   }
@@ -52,5 +52,14 @@ export class AuthController {
 
   }
 
+
+  @ApiOperation({ summary: "Getting Permissions", description: "With this api you can get permissions" })
+  @Get("get-permissions/:userId")
+  async getPermissions (@Param("userId", ParseIntPipe) userId: number) {
+
+    const permissions = await this.authService.getPermissions(userId);
+    return { permissions };
+
+  }
 
 }
