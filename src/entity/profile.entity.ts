@@ -18,7 +18,7 @@ export class Profile {
     birthDate!: Date;
 
     @Column({type: "varchar", nullable: true})
-    avatar!: string;
+    avatar!: string | null;
 
     @CreateDateColumn()
     createdAt!: Date;

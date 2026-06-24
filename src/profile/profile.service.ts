@@ -5,6 +5,7 @@ import { User } from '../entity/user.entity';
 import { Repository } from 'typeorm';
 import { Profile } from '../entity/profile.entity';
 import { UpdateProfileDto } from './dto/updateProfile.dto';
+import { Express } from "express";
 
 @Injectable()
 export class ProfileService {
@@ -37,6 +38,25 @@ export class ProfileService {
         if (!user) throw new NotFoundException("User Not Found!");
 
         await this.profileRepo.update({ user }, data);
+        return;
+
+    }
+
+
+    async uploadProfile (image: Express.Multer.File, request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId }, relations: { profile: true }});
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const path = image.path;
+        const profile = await this.profileRepo.findOne({ where: { user: { id: userId } } });
+        if (!profile) throw new NotFoundException("Profile Not Found!");
+
+        profile.avatar = null;
+        profile.avatar = `http://localhost:${process.env.HOST_POST}/uploads/${image.filename}`;
+        await this.profileRepo.save(profile);
+
         return;
 
     }
