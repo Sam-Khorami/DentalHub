@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
 import { Repository } from 'typeorm';
@@ -11,6 +11,7 @@ import { OtpVerificationDto } from './dto/otpVerification.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import bcrypt from "bcrypt";
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
         @InjectRepository(Role) private readonly roleRepo: Repository<Role>,
         @InjectRepository(Permission) private readonly permissionRepo: Repository<Permission>,
         @InjectRepository(Otp) private readonly otpRepo: Repository<Otp>,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
         private mailService: MailService,
         private jwtService: JwtService
 
@@ -37,12 +39,11 @@ export class AuthService {
         const newUser = this.userRepo.create({ username: data.username, email: data.email, password: data.password, roles: [role!] });
         await this.userRepo.save(newUser);
 
-        // Generate Otp And Save It
+        // Generate Otp
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const newOtp = this.otpRepo.create({ otp, user: newUser, expiresAt: new Date(Date.now() + 2 * 60 * 1000) });
-        await this.otpRepo.save(newOtp);
 
-        // Sending Otp
+        // Sending Otp And Set it up in redis
+        await this.cacheManager.set(`otp:${data.username}`, otp, 120000);
         await this.mailService.sendOtp(data.email, otp);
 
         return;
@@ -61,12 +62,11 @@ export class AuthService {
         const checkPassword = await bcrypt.compare(data.password, hashedPassword);
         if (!checkPassword) throw new BadRequestException("Username or Password are wrong!");
 
-        // Generate Otp And Save It
+        // Generate Otp
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const newOtp = this.otpRepo.create({ otp, user, expiresAt: new Date(Date.now() + 2 * 60 * 1000) });
-        await this.otpRepo.save(newOtp);
 
-        // Sending Otp Code To Email
+        // Sending Otp Code To Email And Set it up in redis
+        await this.cacheManager.set(`otp:${data.username}`, otp, 120000);
         this.mailService.sendOtp(user.email, otp);
         return;
         
@@ -94,22 +94,16 @@ export class AuthService {
         const user = await this.userRepo.findOne({ where: { username: data.username }, relations: { roles: true } });
         if (!user) throw new NotFoundException("User Not Found!");
 
-        // Checking Otp Exsiting
-        const otp = await this.otpRepo.findOne({ where: { user: { username: data.username }, otp: data.otp } });
-        if (!otp) throw new NotFoundException("Otp Not Found!");
-
-        // Checing Otp Expiration
-        if (otp.isExpired) throw new BadRequestException("Otp is expired!!");
-        if (new Date(Date.now()) > otp.expiresAt) throw new BadRequestException("Otp is expired!");
+        // Checking Otp Exsiting & Expiration
+        const otp: string | undefined = await this.cacheManager.get(`otp:${data.username}`);
+        if (!otp) throw new BadRequestException("Otp is expired!!");
+        if (data.otp !== otp) throw new BadRequestException("Your entered otp does not match!"); 
 
         // Generate Token & Change Tables Datas
         const token = this.jwtService.sign({ username: user.username, userId: user.id, role: user.role });
         user.is_email_verified = true
         user.is_verified = true;
-        otp.isExpired = true;
-
         await this.userRepo.save(user);
-        await this.otpRepo.save(otp);
 
         // Returning Token
         return token;

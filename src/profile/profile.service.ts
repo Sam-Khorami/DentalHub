@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CompleteProfileDto } from './dto/completeProfile.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
@@ -49,7 +49,6 @@ export class ProfileService {
         const user = await this.userRepo.findOne({ where: { id: userId }, relations: { profile: true }});
         if (!user) throw new NotFoundException("User Not Found!");
 
-        const path = image.path;
         const profile = await this.profileRepo.findOne({ where: { user: { id: userId } } });
         if (!profile) throw new NotFoundException("Profile Not Found!");
 
@@ -60,5 +59,46 @@ export class ProfileService {
         return;
 
     }
+
+    async uploadLicence (licence: Express.Multer.File, request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId }, relations: { profile: true } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const profile = await this.profileRepo.findOne({ where: { user: { id: userId } } });
+        if (!profile) throw new NotFoundException("Profile Not Found!");
+        if (profile.licences === null) profile.licences = [];
+
+        const path = `http://localhost:${process.env.HOST_POST}/uploads/${licence.filename}`;
+        const checkProfile = profile.licences.includes(path);
+        if (checkProfile) throw new ConflictException("Licence Already Uploaded");
+
+        profile.licences.push(path);
+        await this.profileRepo.save(profile);
+        return;
+
+    }
+
+    async uploadPortfolio (portfolio: Express.Multer.File, request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId }, relations: { profile: true } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const profile = await this.profileRepo.findOne({ where: { user: { id: userId } } });
+        if (!profile) throw new NotFoundException("Profile Not Found!");
+        if (profile.portfolios === null) profile.portfolios = [];
+
+        const path = `http://localhost:${process.env.HOST_POST}/uploads/${portfolio.filename}`;
+        const checkProfile = profile.portfolios.includes(path);
+        if (checkProfile) throw new ConflictException("Portfolio Already Uploaded");
+
+        profile.portfolios.push(path);
+        await this.profileRepo.save(profile);
+        return;
+
+    }
+
 
 }

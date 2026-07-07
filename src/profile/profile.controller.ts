@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Post, Put, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ProfileService } from './profile.service';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Permission } from '../decorators/permission.decorator';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
 import { PermissionGuard } from '../guards/permission.guard';
@@ -98,9 +98,129 @@ export class ProfileController {
   @Post("upload-profile")
   async uploadProfile (@UploadedFile() image: Express.Multer.File, @Req() request: Request) {
 
-    if (!image) throw new BadRequestException("File didn't uploaded successfully!");
+    if (!image) throw new BadRequestException("Image didn't uploaded successfully!");
     await this.profileService.uploadProfile(image, request);
     return { message: "Profile uploaded successfully", profilePath: `http://localhost:${process.env.HOST_POST}/uploads/${image.filename}` }
+
+  }
+
+
+  @ApiOperation({summary: "Upload Licence", description: "With this api you can upload your Licences"})
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({
+
+    schema: {
+
+      type: "object",
+      properties: {
+
+        licence: {
+
+          type: "string",
+          format: "binary"
+
+        }
+
+      }
+
+    }
+
+  })
+  @UseInterceptors(
+
+    FileInterceptor(
+
+      "licence", {
+
+        storage: diskStorage({ destination: "./uploads", filename(req, file, cb) {
+          
+          const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1000)}${extname(file.originalname)}`;
+          cb (null, uniqueName);
+
+        }, }),
+
+        limits: { fileSize: 10 * 1024 * 1024 },
+        fileFilter: (req, file, cb) => {
+
+        const allowMimeTypes = ["image/png", "image/jpg", "image/jpeg", "application/pdf"];
+
+        if (allowMimeTypes.includes(file.mimetype)) cb (null, true);
+        else cb (new BadRequestException("Bad File Format"), false);
+
+        }
+
+      }
+
+    )
+
+  )
+  @Permission("profile:change", "profile:upload", "profile:upload:licence")
+  @Post("upload-licence")
+  async uploadLicence (@UploadedFile() licence: Express.Multer.File, @Req() request: Request) {
+
+    if (!licence) throw new BadRequestException("Licence didn't uploaded successfully!");
+    await this.profileService.uploadLicence(licence, request);
+    return { message: "The licence uploaded successfully!", licencePath: `http://localhost:${process.env.HOST_POST}/uploads/${licence.filename}` }
+
+  }
+
+
+  @ApiOperation({summary: "Upload Portfolio", description: "With this api you can upload your Portfolios"})
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({
+
+    schema: {
+
+      type: "object",
+      properties: {
+
+        licence: {
+
+          type: "string",
+          format: "binary"
+
+        }
+
+      }
+
+    }
+
+  })
+  @UseInterceptors(
+
+    FileInterceptor(
+
+      "portfolio", {
+
+        storage: diskStorage({ destination: "./uploads", filename(req, file, cb) {
+          
+          const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1000)}${extname(file.originalname)}`;
+          cb (null, uniqueName);
+
+        }, }),
+
+        limits: { fileSize: 10 * 1024 * 1024 },
+        fileFilter: (req, file, cb) => {
+
+        const allowMimeTypes = ["image/png", "image/jpg", "image/jpeg", "application/pdf"];
+
+        if (allowMimeTypes.includes(file.mimetype)) cb (null, true);
+        else cb (new BadRequestException("Bad File Format"), false);
+
+        }
+
+      }
+
+    )
+
+  )
+  @Permission("profile:change", "profile:upload", "profile:upload:portfolio")
+  @Post("upload-portfolio")
+  async uploadPortfolio (@UploadedFile() portfolio: Express.Multer.File, @Req() request: Request) {
+
+    if (!portfolio) throw new BadRequestException("Portfolio didn't uploaded successfully!");
+    await this.profileService.uploadPortfolio(portfolio, request);
+    return { message: "The portfolio uploaded successfully!", licencePath: `http://localhost:${process.env.HOST_POST}/uploads/${portfolio.filename}` }
 
   }
 

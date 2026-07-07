@@ -20,6 +20,12 @@ export class Profile {
     @Column({type: "varchar", nullable: true})
     avatar!: string | null;
 
+    @Column({type: "simple-array", nullable: true})
+    licences!: string[];
+
+    @Column({type: "simple-array", nullable: true})
+    portfolios!: string[];
+
     @CreateDateColumn()
     createdAt!: Date;
 

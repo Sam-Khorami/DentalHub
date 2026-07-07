@@ -27,7 +27,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, document, { swaggerOptions: { persistAuthorization: true } });
 
-  await app.listen(process.env.HOST_POST!);
+  await app.listen(process.env.HOST_PORT!);
 
 
 }
