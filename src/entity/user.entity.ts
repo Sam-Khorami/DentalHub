@@ -2,7 +2,6 @@ import { BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, 
 import { Role } from "./role.entity";
 import { Permission } from "./permission.entity";
 import bcrypt from "bcrypt";
-import { Otp } from "./otp.entity";
 import { Profile } from "./profile.entity";
 
 export enum UserRole { User = "user", SuperAdmin = "superAdmin", Admin = "admin", Clerk = "clerk", OrthodonticTherapist = "orthodonticTherapist", DentalHygienist = "dentalHygienist", DentalNurse = "dentalNurse", DentalTechnician = "dentalTechnician", DentalTherapist = "dentalTherapist", Dentist = "dentist" };
@@ -44,9 +43,6 @@ export class User {
     @ManyToMany(() => Permission, (permissions) => permissions)
     @JoinTable({name: "user_permission"})
     permissions!: Permission[];
-
-    @OneToMany(() => Otp, (otps) => otps.user)
-    otps!: Otp[];
 
     @OneToOne(() => Profile, (profile) => profile.user)
     profile!: Profile;

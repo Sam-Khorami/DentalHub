@@ -8,7 +8,6 @@ import { Role } from './entity/role.entity';
 import { Permission } from './entity/permission.entity';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
-import { Otp } from './entity/otp.entity';
 import { SeedModule } from './seed/seed.module';
 import { IpModule } from './ip/ip.module';
 import { Ip } from './entity/ip.entity';
@@ -33,7 +32,7 @@ import KeyvRedis from "@keyv/redis";
       port: +process.env.DB_PORT!,
       password: process.env.DB_PASS,
       username: process.env.DB_USER,
-      entities: [User, Role, Permission, Otp, Ip, Profile]
+      entities: [User, Role, Permission, Ip, Profile]
 
     }),
     CacheModule.registerAsync({

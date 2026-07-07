@@ -6,7 +6,6 @@ import { SigninDto } from './dto/signin.dto';
 import { MailService } from '../mail/mail.service';
 import { Role } from '../entity/role.entity';
 import { Permission } from '../entity/permission.entity';
-import { Otp } from '../entity/otp.entity';
 import { OtpVerificationDto } from './dto/otpVerification.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
@@ -21,7 +20,6 @@ export class AuthService {
         @InjectRepository(User) private readonly userRepo: Repository<User>,
         @InjectRepository(Role) private readonly roleRepo: Repository<Role>,
         @InjectRepository(Permission) private readonly permissionRepo: Repository<Permission>,
-        @InjectRepository(Otp) private readonly otpRepo: Repository<Otp>,
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
         private mailService: MailService,
         private jwtService: JwtService
