@@ -36,5 +36,22 @@ export class MailService {
 
     }
 
+    async sendEmailToAdmins (admins: string[], text: string) {
+
+        admins.forEach((admin) => {
+
+            this.transporter.sendMail({
+
+                from: this.configService.get("GMAIL_USER"),
+                to: admin,
+                subject: "To Admins",
+                text
+
+            })
+
+        })
+
+    }
+
 
 }

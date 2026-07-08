@@ -12,12 +12,13 @@ import { SeedModule } from './seed/seed.module';
 import { IpModule } from './ip/ip.module';
 import { Ip } from './entity/ip.entity';
 import { IpTracker } from './middleware/ipTracker.middleware';
-import { TasksModule } from './tasks/tasks.module';
 import { UsersModule } from './users/users.module';
 import { ProfileModule } from './profile/profile.module';
 import { Profile } from './entity/profile.entity';
 import { CacheModule } from "@nestjs/cache-manager";
+import { AdminModule } from './admin/admin.module';
 import KeyvRedis from "@keyv/redis";
+import { Requests } from './entity/request.entity';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import KeyvRedis from "@keyv/redis";
       port: +process.env.DB_PORT!,
       password: process.env.DB_PASS,
       username: process.env.DB_USER,
-      entities: [User, Role, Permission, Ip, Profile]
+      entities: [User, Role, Permission, Ip, Profile, Requests]
 
     }),
     CacheModule.registerAsync({
@@ -49,9 +50,9 @@ import KeyvRedis from "@keyv/redis";
     MailModule,
     SeedModule,
     IpModule,
-    TasksModule,
     UsersModule,
-    ProfileModule
+    ProfileModule,
+    AdminModule
 
   ],
   controllers: [AppController],

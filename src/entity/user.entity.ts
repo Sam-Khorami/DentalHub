@@ -3,6 +3,7 @@ import { Role } from "./role.entity";
 import { Permission } from "./permission.entity";
 import bcrypt from "bcrypt";
 import { Profile } from "./profile.entity";
+import { Requests } from "./request.entity";
 
 export enum UserRole { User = "user", SuperAdmin = "superAdmin", Admin = "admin", Clerk = "clerk", OrthodonticTherapist = "orthodonticTherapist", DentalHygienist = "dentalHygienist", DentalNurse = "dentalNurse", DentalTechnician = "dentalTechnician", DentalTherapist = "dentalTherapist", Dentist = "dentist" };
 
@@ -46,6 +47,9 @@ export class User {
 
     @OneToOne(() => Profile, (profile) => profile.user)
     profile!: Profile;
+
+    @OneToMany(() => Requests, (requests) => requests.user)
+    requests!: Requests[];
 
     @BeforeInsert()
     async hashPassword () {
