@@ -53,5 +53,19 @@ export class MailService {
 
     }
 
+    async sendEmailToUser (user: string, text: string) {
+
+        this.transporter.sendMail({
+
+            from: this.configService.get("GMAIL_USER"),
+            to: user,
+            subject: "To User",
+            text
+
+        })
+
+
+    }
+
 
 }

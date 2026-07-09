@@ -23,7 +23,7 @@ export class User {
     password!: string;
 
     @Column({ type: "enum", enum: UserRole, default: UserRole.User })
-    role!: UserRole;
+    role!: UserRole | string;
 
     @Column({ type: "boolean", nullable: false, default: false })
     is_email_verified!: boolean;

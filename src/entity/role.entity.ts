@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { User } from "./user.entity";
 import { Permission } from "./permission.entity";
+import { UserRole } from "./user.entity";
 
 
 @Entity("role")
@@ -10,7 +10,7 @@ export class Role {
     id!: number;
 
     @Column({type: "varchar", unique: true, nullable: false})
-    name!: string;
+    name!: UserRole | string;
 
     @CreateDateColumn()
     createdAt!: Date;
