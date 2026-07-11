@@ -87,21 +87,32 @@ export class AdminService {
         checkRequest.status = RequestStatus.Accepted;
         await this.userRepo.save(user);
         await this.requestsRepo.save(checkRequest);
+
+        // Sending Notfication To User
+        await this.mailService.sendEmailToUser(user.email, `Hi dear ${user.username} your request accepted from our admins`)
+
         return;
 
     }
 
     async rejectRequest (userId: number) {
 
+        // Checking User
         const user = await this.userRepo.findOne({ where: { id: userId } });
         if (!user) throw new NotFoundException("User Not Found");
         if (user.role !== UserRole.User) throw new BadRequestException("You do not have access for this operation");
 
+        // Checking Request
         const checkRequest = await this.requestsRepo.findOne({ where: { user: { id: userId } } });
         if (!checkRequest || checkRequest.status !== RequestStatus.Pending) throw new BadRequestException("The request for this user does not exists!");
 
+        // Changing table
         checkRequest.status = RequestStatus.Rejected;
         await this.requestsRepo.save(checkRequest);
+
+        // Sending Notfication To User
+        await this.mailService.sendEmailToUser(user.email, `Hi dear ${user.username} your request rejected from our admins`)
+
         return;
 
     }
