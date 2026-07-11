@@ -91,5 +91,19 @@ export class AdminService {
 
     }
 
+    async rejectRequest (userId: number) {
+
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found");
+        if (user.role !== UserRole.User) throw new BadRequestException("You do not have access for this operation");
+
+        const checkRequest = await this.requestsRepo.findOne({ where: { user: { id: userId } } });
+        if (!checkRequest || checkRequest.status !== RequestStatus.Pending) throw new BadRequestException("The request for this user does not exists!");
+
+        checkRequest.status = RequestStatus.Rejected;
+        await this.requestsRepo.save(checkRequest);
+        return;
+
+    }
 
 }

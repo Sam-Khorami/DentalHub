@@ -50,4 +50,13 @@ export class AdminController {
 
   }
 
+  @Permission("request:reject")
+  @Post("reject-request/:userId")
+  async rejectRequest (@Param("userId", ParseIntPipe) userId: number) {
+
+    await this.adminService.rejectRequest(userId);
+    return { message: "The request rejected successfully!" }
+
+  }
+
 }
