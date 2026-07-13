@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserRole } from '../entity/user.entity';
+import { User } from '../entity/user.entity';
 import { Repository } from 'typeorm';
-import { Requests, RequestStatus } from '../entity/request.entity';
+import { Requests } from '../entity/request.entity';
 import { RequestToAdminDto } from './dto/requestToAdmin.dto';
 import { MailService } from '../mail/mail.service';
 import { Role } from '../entity/role.entity';
+import { UserRole, RequestStatus } from "../enums/entity.enums"
 
 @Injectable()
 export class AdminService {

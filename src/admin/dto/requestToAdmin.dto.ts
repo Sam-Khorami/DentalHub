@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { RequestEnum } from "../../entity/request.entity";
+import { RequestEnum } from "../../enums/entity.enums"
 
 
 export class RequestToAdminDto {

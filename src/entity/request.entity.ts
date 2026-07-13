@@ -1,22 +1,6 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity";
-
-
-// beingDentalTechnician,beingDentalTherapist,beingDentist
-
-export enum RequestStatus { Accepted = "accepted", Rejected = "rejected", Pending = "pending" }
-export enum RequestEnum { 
-    
-    BeingDoctor = "beingDoctor",
-    BeingClerk = "beingClerk",
-    BeingOrthodonticTherapist = "beingOrthodonticTherapist",
-    BeingDentalHygienist = "beingDentalHygienist",
-    BeingDentalNurse = "beingDentalNurse",
-    BeingDentalTechnician = "beingDentalTechnician",
-    BeingDentalTherapist = "beingDentalTherapist",
-    BeingDentist = "beingDentist"
-
-}
+import { RequestEnum, RequestStatus } from "../enums/entity.enums";
 
 @Entity("requests")
 export class Requests {

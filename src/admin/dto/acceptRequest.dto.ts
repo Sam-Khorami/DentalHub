@@ -1,5 +1,5 @@
 import { IsEnum } from "class-validator";
-import { UserRole } from "../../entity/user.entity";
+import { UserRole } from "../../enums/entity.enums"
 import { ApiProperty } from "@nestjs/swagger";
 
 

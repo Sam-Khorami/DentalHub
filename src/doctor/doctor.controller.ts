@@ -1,0 +1,45 @@
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
+import { DoctorService } from './doctor.service';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../guards/jwtAuth.guard';
+import { PermissionGuard } from '../guards/permission.guard';
+import { Permission } from '../decorators/permission.decorator';
+import { SetScheduleDto } from './dto/setSchedule.dto';
+
+@ApiTags("Doctors Management")
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard, PermissionGuard)
+@Controller('doctor')
+export class DoctorController {
+
+  constructor(private readonly doctorService: DoctorService) {}
+
+  @Permission("schedule:create")
+  @Post("set-schedule")
+  async setSchedule (@Body() data: SetScheduleDto, @Req() request: Request) {
+
+    await this.doctorService.setSchedule(data, request);
+    return { message: "Schedule has been set" }
+
+
+  }
+
+  @Permission("schedule:read")
+  @Get("get-schedules")
+  async getSchedules (@Req() request: Request) {
+
+    const schedules = await this.doctorService.getSchedules(request);
+    return { schedules }
+
+  }
+
+  @Permission("schedule:read")
+  @Get("get-schedule/:scheduleId")
+  async getSchedule (@Param("scheduleId", ParseIntPipe) scheduleId: number, @Req() request: Request) {
+
+    const schedule = await this.doctorService.getSchedule(scheduleId, request);
+    return { schedule }
+
+  }
+
+}

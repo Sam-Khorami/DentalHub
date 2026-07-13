@@ -4,8 +4,9 @@ import { Permission } from "./permission.entity";
 import bcrypt from "bcrypt";
 import { Profile } from "./profile.entity";
 import { Requests } from "./request.entity";
-
-export enum UserRole { User = "user", SuperAdmin = "superAdmin", Admin = "admin", Clerk = "clerk", OrthodonticTherapist = "orthodonticTherapist", DentalHygienist = "dentalHygienist", DentalNurse = "dentalNurse", DentalTechnician = "dentalTechnician", DentalTherapist = "dentalTherapist", Dentist = "dentist" };
+import { DoctorSchedule } from "./doctorSchedule.entity";
+import { Slots } from "./slots.entity";
+import { UserRole } from "../enums/entity.enums";
 
 @Entity("user")
 export class User {
@@ -50,6 +51,12 @@ export class User {
 
     @OneToMany(() => Requests, (requests) => requests.user)
     requests!: Requests[];
+
+    @OneToMany(() => DoctorSchedule, (doctorSchedules) => doctorSchedules.user)
+    doctorSchedules!: DoctorSchedule[];
+
+    @OneToMany(() => Slots, (slots) => slots.user)
+    slots!: Slots[];
 
     @BeforeInsert()
     async hashPassword () {

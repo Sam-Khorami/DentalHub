@@ -1,10 +1,11 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserRole } from '../entity/user.entity';
+import { User } from '../entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { Role } from '../entity/role.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import { UserRole } from "../enums/entity.enums";
 
 @Injectable()
 export class UsersService {

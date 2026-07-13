@@ -19,6 +19,9 @@ import { CacheModule } from "@nestjs/cache-manager";
 import { AdminModule } from './admin/admin.module';
 import KeyvRedis from "@keyv/redis";
 import { Requests } from './entity/request.entity';
+import { DoctorSchedule } from './entity/doctorSchedule.entity';
+import { Slots } from './entity/slots.entity';
+import { DoctorModule } from './doctor/doctor.module';
 
 @Module({
   imports: [
@@ -33,7 +36,7 @@ import { Requests } from './entity/request.entity';
       port: +process.env.DB_PORT!,
       password: process.env.DB_PASS,
       username: process.env.DB_USER,
-      entities: [User, Role, Permission, Ip, Profile, Requests]
+      entities: [User, Role, Permission, Ip, Profile, Requests, DoctorSchedule, Slots]
 
     }),
     CacheModule.registerAsync({
@@ -52,7 +55,8 @@ import { Requests } from './entity/request.entity';
     IpModule,
     UsersModule,
     ProfileModule,
-    AdminModule
+    AdminModule,
+    DoctorModule
 
   ],
   controllers: [AppController],
