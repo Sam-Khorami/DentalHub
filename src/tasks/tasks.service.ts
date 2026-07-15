@@ -11,8 +11,7 @@ export class TasksService {
 
     ) {}
 
-    // "0 23 * * 5"
-    @Cron(CronExpression.EVERY_30_SECONDS)
+    @Cron("0 23 * * 5")
     async schedule () {
 
         await this.scheduleJob.schedule();

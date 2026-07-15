@@ -53,6 +53,23 @@ export class MailService {
 
     }
 
+    async sendEmailToClerks (clerks: string[], text: string) {
+
+        clerks.forEach((clerk) => {
+
+            this.transporter.sendMail({
+
+                from: this.configService.get("GMAIL_USER"),
+                to: clerk,
+                subject: "To Clerk",
+                text
+
+            })
+
+        })
+
+    }
+
     async sendEmailToUser (user: string, text: string) {
 
         this.transporter.sendMail({

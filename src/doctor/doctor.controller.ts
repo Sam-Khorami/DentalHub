@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
 import { PermissionGuard } from '../guards/permission.guard';
 import { Permission } from '../decorators/permission.decorator';
 import { SetScheduleDto } from './dto/setSchedule.dto';
+import { ChangeScheduleDto } from './dto/changeSchedule.dto';
 
 @ApiTags("Doctors Management")
 @ApiBearerAuth()
@@ -21,6 +22,15 @@ export class DoctorController {
     await this.doctorService.setSchedule(data, request);
     return { message: "Schedule has been set" }
 
+
+  }
+
+  @Permission("schedule:change")
+  @Put("change-schedule/:slotId")
+  async changeSchedule (@Param("slotId", ParseIntPipe) slotId: number, @Body() data: ChangeScheduleDto, @Req() request: Request) {
+
+    await this.doctorService.changeSchedule(data, slotId, request);
+    return { message: "Schedule changed successfully!" }
 
   }
 

@@ -24,6 +24,7 @@ import { Slots } from './entity/slots.entity';
 import { DoctorModule } from './doctor/doctor.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { PatientModule } from './patient/patient.module';
 
 @Module({
   imports: [
@@ -60,7 +61,8 @@ import { ScheduleModule } from '@nestjs/schedule';
     ProfileModule,
     AdminModule,
     DoctorModule,
-    TasksModule
+    TasksModule,
+    PatientModule
 
   ],
   controllers: [AppController],
