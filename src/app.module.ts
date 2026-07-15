@@ -22,11 +22,14 @@ import { Requests } from './entity/request.entity';
 import { DoctorSchedule } from './entity/doctorSchedule.entity';
 import { Slots } from './entity/slots.entity';
 import { DoctorModule } from './doctor/doctor.module';
+import { TasksModule } from './tasks/tasks.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
 
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
 
       type: "mysql",
@@ -56,7 +59,8 @@ import { DoctorModule } from './doctor/doctor.module';
     UsersModule,
     ProfileModule,
     AdminModule,
-    DoctorModule
+    DoctorModule,
+    TasksModule
 
   ],
   controllers: [AppController],
