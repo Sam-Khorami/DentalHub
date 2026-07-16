@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
@@ -31,6 +31,14 @@ export class DoctorController {
 
     await this.doctorService.changeSchedule(data, slotId, request);
     return { message: "Schedule changed successfully!" }
+
+  }
+
+  @Delete("delete-schedule/:scheduleId")
+  async deleteSchedule (@Param("scheduleId", ParseIntPipe) scheduleId: number, @Req() request: Request) {
+
+    await this.doctorService.deleteSchedule(scheduleId, request);
+    return { message: "The schedule deleted successfully" }
 
   }
 

@@ -69,6 +69,20 @@ export class DoctorService {
 
     }
 
+    async deleteSchedule (scheduleId: number, request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found");
+
+        const schedule = await this.doctorScheduleRepo.findOne({ where: { id: scheduleId, user: { id: userId } } });
+        if (!schedule) throw new NotFoundException("Schedule Not Found!");
+
+        await this.doctorScheduleRepo.remove(schedule);
+        return;
+        
+    }
+
 
     async getSchedules (request: Request) {
 
