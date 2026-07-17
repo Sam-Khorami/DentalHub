@@ -6,11 +6,12 @@ import { User } from '../entity/user.entity';
 import { Requests } from '../entity/request.entity';
 import { MailModule } from '../mail/mail.module';
 import { AuthModule } from '../auth/auth.module';
+import { Slots } from '../entity/slots.entity';
 
 @Module({
   imports: [
   
-    TypeOrmModule.forFeature([User, Requests]),
+    TypeOrmModule.forFeature([User, Requests, Slots]),
     MailModule,
     AuthModule
   
