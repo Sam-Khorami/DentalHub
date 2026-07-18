@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../guards/jwtAuth.guard';
 import { PermissionGuard } from '../guards/permission.guard';
 import { RequestToAdminDto } from "./dto/requestToAdmin.dto";
 import { DayOfWeekEnum } from '../enums/entity.enums';
+import { AvailableAppointmentsDto } from './dto/availableAppointments.dto';
 
 @UseGuards(JwtAuthGuard, PermissionGuard)
 @ApiBearerAuth()
@@ -23,9 +24,9 @@ export class PatientController {
   }
 
   @Get("available-appointments")
-  async availableAppointments (@Query("day") day: DayOfWeekEnum) {
+  async availableAppointments (@Query() query: AvailableAppointmentsDto) {
 
-    const appointments = await this.patientService.availableAppointments(day);
+    const appointments = await this.patientService.availableAppointments(query);
     return { appointments } 
 
   }

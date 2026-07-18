@@ -7,6 +7,7 @@ import { RequestToAdminDto } from './dto/requestToAdmin.dto';
 import { DayOfWeekEnum, SlotsStatusEnum, UserRole } from '../enums/entity.enums';
 import { MailService } from '../mail/mail.service';
 import { Slots } from '../entity/slots.entity';
+import { AvailableAppointmentsDto } from './dto/availableAppointments.dto';
 
 @Injectable()
 export class PatientService {
@@ -63,9 +64,9 @@ export class PatientService {
 
     }
 
-    async availableAppointments (day: DayOfWeekEnum) {
+    async availableAppointments (query: AvailableAppointmentsDto) {
 
-        if (day === DayOfWeekEnum.Friday) throw new BadRequestException("Clinic is closed for this day");
+        if (query.day === DayOfWeekEnum.Friday) throw new BadRequestException("Clinic is closed for this day");
 
         const now = new Date();
         const dayMap = {
@@ -78,7 +79,7 @@ export class PatientService {
             [DayOfWeekEnum.Friday]: 6,
         }
 
-        const requestedDay = dayMap[day];
+        const requestedDay = dayMap[query.day!];
         const targetDate = this.getTargetDate(requestedDay);
 
         const startOfTargetDay = new Date(targetDate);
@@ -96,7 +97,7 @@ export class PatientService {
             
             where: {
                 status: SlotsStatusEnum.Available,
-                doctorSchedule: { dayOfWeek: day },
+                doctorSchedule: { dayOfWeek: query.day },
                 startAt: MoreThanOrEqual(filterFrom)
             },
             relations: { user: true },
