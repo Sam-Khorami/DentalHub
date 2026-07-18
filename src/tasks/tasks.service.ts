@@ -18,4 +18,11 @@ export class TasksService {
 
     }
 
+    @Cron("0 22 * * 5")
+    async clearSchedule () {
+
+        await this.scheduleJob.clearSchedule();
+
+    }
+
 }

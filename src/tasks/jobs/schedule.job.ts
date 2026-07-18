@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { DayOfWeekEnum } from "../../enums/entity.enums";
+import { DayOfWeekEnum, SlotsStatusEnum } from "../../enums/entity.enums";
 import { Day, nextDay, startOfDay } from "date-fns";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DoctorSchedule } from "../../entity/doctorSchedule.entity";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { Slots } from "../../entity/slots.entity";
 
 @Injectable()
@@ -110,7 +110,17 @@ export class ScheduleJob {
             await this.slotsRepo.save(slots);
 
         }
-       
+
+    }
+
+    async clearSchedule () {
+
+        console.log("Starting For Clearing Useless Schedules");
+        const slots = await this.slotsRepo.find({ where: { status: In([SlotsStatusEnum.Booked, SlotsStatusEnum.Cancelled, SlotsStatusEnum.Completed, SlotsStatusEnum.Reserved]) } });
+        if(!slots) return;
+
+        await this.slotsRepo.remove(slots);
+        return;
 
     }
 
