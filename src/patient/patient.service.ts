@@ -8,6 +8,7 @@ import { DayOfWeekEnum, SlotsStatusEnum, UserRole } from '../enums/entity.enums'
 import { MailService } from '../mail/mail.service';
 import { Slots } from '../entity/slots.entity';
 import { AvailableAppointmentsDto } from './dto/availableAppointments.dto';
+import { DoctorSchedule } from '../entity/doctorSchedule.entity';
 
 @Injectable()
 export class PatientService {
@@ -17,6 +18,7 @@ export class PatientService {
         @InjectRepository(User) private readonly userRepo: Repository<User>,
         @InjectRepository(Requests) private readonly requestsRepo: Repository<Requests>,
         @InjectRepository(Slots) private readonly slotsRepo: Repository<Slots>,
+        @InjectRepository(DoctorSchedule) private readonly doctorScheduleRepo: Repository<DoctorSchedule>,
         private readonly mailService: MailService
     
     ) {}
@@ -66,46 +68,71 @@ export class PatientService {
 
     async availableAppointments (query: AvailableAppointmentsDto) {
 
-        if (query.day === DayOfWeekEnum.Friday) throw new BadRequestException("Clinic is closed for this day");
+        if (query.day && query.day === DayOfWeekEnum.Friday) throw new BadRequestException("Clinic is closed for this day");
+        if (query.doctorId) {
 
-        const now = new Date();
-        const dayMap = {
-            [DayOfWeekEnum.Saturday]: 0,
-            [DayOfWeekEnum.Sunday]: 1,
-            [DayOfWeekEnum.Monday]: 2,
-            [DayOfWeekEnum.Tuesday]: 3,
-            [DayOfWeekEnum.Wednesday]: 4,
-            [DayOfWeekEnum.Thursday]: 5,
-            [DayOfWeekEnum.Friday]: 6,
+            const roles: UserRole[] = [UserRole.Dentist, UserRole.OrthodonticTherapist, UserRole.DentalHygienist, UserRole.DentalNurse, UserRole.DentalTherapist];
+
+            const doctor = await this.doctorScheduleRepo.findOne({ where: { user: { id: query.doctorId } }, relations: { user: true } });
+            if (!doctor) throw new NotFoundException("User Not Found!");
+            if (!roles.includes(doctor.user.role as UserRole)) throw new BadRequestException("The entered docterId is not clinic staff");
+
         }
 
-        const requestedDay = dayMap[query.day!];
-        const targetDate = this.getTargetDate(requestedDay);
+        const now = new Date();
+        let filterFrom = now;
 
-        const startOfTargetDay = new Date(targetDate);
-        startOfTargetDay.setHours(0, 0, 0, 0);
+        if (query.day) {
+            const dayMap = {
+                [DayOfWeekEnum.Saturday]: 0,
+                [DayOfWeekEnum.Sunday]: 1,
+                [DayOfWeekEnum.Monday]: 2,
+                [DayOfWeekEnum.Tuesday]: 3,
+                [DayOfWeekEnum.Wednesday]: 4,
+                [DayOfWeekEnum.Thursday]: 5,
+                [DayOfWeekEnum.Friday]: 6,
+            }
 
-        const endOfTargetDay = new Date(targetDate);
-        endOfTargetDay.setHours(23, 59, 59, 999);
+            const requestedDay = dayMap[query.day!];
+            const targetDate = this.getTargetDate(requestedDay);
 
-        if (endOfTargetDay < now) throw new BadRequestException("You can not view appointments for past days");
+            const startOfTargetDay = new Date(targetDate);
+            startOfTargetDay.setHours(0, 0, 0, 0);
 
-        const isToday = startOfTargetDay.toDateString() === now.toDateString();
-        const filterFrom = isToday ? now : startOfTargetDay;
+            const endOfTargetDay = new Date(targetDate);
+            endOfTargetDay.setHours(23, 59, 59, 999);
+
+            if (endOfTargetDay < now) throw new BadRequestException("You can not view appointments for past days");
+
+            const isToday = startOfTargetDay.toDateString() === now.toDateString();
+            filterFrom = isToday ? now : startOfTargetDay;
+        
+        }
 
         const slotsFromDb = await this.slotsRepo.find({
             
             where: {
                 status: SlotsStatusEnum.Available,
-                doctorSchedule: { dayOfWeek: query.day },
-                startAt: MoreThanOrEqual(filterFrom)
+                startAt: MoreThanOrEqual(filterFrom),
+                ...(query.serviceType && { service_type: query.serviceType }),
+                ...((query.day || query.doctorId) && {
+                    
+                    doctorSchedule: {
+                
+                        ...(query.day && { dayOfWeek: query.day }),            
+                        ...(query.doctorId && { user: { id: query.doctorId } }),
+            
+                    }
+    
+                })
+    
             },
             relations: { user: true },
-            select: { id: true, service_type: true, startAt: true, endAt: true, user: { username: true, role: true }}
-        
+            select: { id: true, service_type: true, startAt: true, endAt: true, user: { username: true, role: true }}    
+
         });
 
-    return slotsFromDb;
+        return slotsFromDb;
 
     }
 
