@@ -71,7 +71,7 @@ export class ProfileController {
     FileInterceptor(
 
       "image", {
-
+        
         storage: diskStorage({ destination: "./uploads", filename(req, file, cb) {
           
           const uniqueFileName = `${Date.now()}-${Math.round(Math.random() * 1000)}${extname(file.originalname)}`;

@@ -1,5 +1,4 @@
+const now = new Date();
 
 
-const today = new Date();
-
-console.log(today.toDateString());
+console.log(now.getDate());

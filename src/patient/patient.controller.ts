@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
@@ -30,5 +30,20 @@ export class PatientController {
     return { appointments } 
 
   }
+
+  @Post("reserve-appointment/:slotId")
+  async reserveAppointment (@Param("slotId", ParseIntPipe) slotId: number, @Req() request: Request) {
+
+    await this.patientService.reserveAppointment(slotId, request);
+    return { message: "The appointment reserved successfully!" }
+
+  }
+
+  // @Post("book-appointment/:slotId")
+  // async bookAppointment (@Param("slotId", ParseIntPipe) slotId: number) {
+
+
+
+  // }
 
 }

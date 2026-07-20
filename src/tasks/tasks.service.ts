@@ -25,4 +25,11 @@ export class TasksService {
 
     }
 
+    @Cron(CronExpression.EVERY_5_MINUTES)
+    async clearReservedAppointments () {
+
+        await this.scheduleJob.clearReservedAppointments();
+
+    }
+
 }

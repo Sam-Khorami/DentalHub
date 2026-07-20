@@ -5,6 +5,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { DoctorSchedule } from "../../entity/doctorSchedule.entity";
 import { In, Repository } from "typeorm";
 import { Slots } from "../../entity/slots.entity";
+import { MailService } from "../../mail/mail.service";
+import { Reservation } from "../../entity/reserve.entity";
 
 @Injectable()
 export class ScheduleJob {
@@ -12,7 +14,9 @@ export class ScheduleJob {
     constructor (
 
         @InjectRepository(DoctorSchedule) private readonly doctorScheduleRepo: Repository<DoctorSchedule>,
-        @InjectRepository(Slots) private readonly slotsRepo: Repository<Slots>
+        @InjectRepository(Slots) private readonly slotsRepo: Repository<Slots>,
+        @InjectRepository(Reservation) private readonly reservationRepo: Repository<Reservation>,
+        private readonly mailService: MailService
 
     ) {}
 
@@ -122,6 +126,32 @@ export class ScheduleJob {
         await this.slotsRepo.remove(slots);
         return;
 
+    }
+
+    async clearReservedAppointments () {
+
+        const slots = await this.slotsRepo.find({ where: { status: SlotsStatusEnum.Reserved } });
+        if (!slots) return;
+        
+        const now = new Date();
+        
+        console.log("Starting For Clearing Reserved Appointments");
+        slots.forEach(async (slot) => {
+            
+            slot.updatedAt.setHours(slot.updatedAt.getHours() + 1);                       
+            if (now > slot.updatedAt) {
+                
+                slot.status = SlotsStatusEnum.Available;
+                this.mailService.sendEmailToUser(slot.user.email, `Hi dear ${slot.user.username} your reservation expired`);
+                await this.reservationRepo.delete({ slot })
+
+            }
+            slot.updatedAt.setHours(slot.updatedAt.getHours() - 1);
+
+        })
+        
+        await this.slotsRepo.save(slots);
+        return;
     }
 
 }

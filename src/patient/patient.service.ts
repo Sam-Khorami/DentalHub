@@ -9,6 +9,7 @@ import { MailService } from '../mail/mail.service';
 import { Slots } from '../entity/slots.entity';
 import { AvailableAppointmentsDto } from './dto/availableAppointments.dto';
 import { DoctorSchedule } from '../entity/doctorSchedule.entity';
+import { Reservation } from '../entity/reserve.entity';
 
 @Injectable()
 export class PatientService {
@@ -19,6 +20,7 @@ export class PatientService {
         @InjectRepository(Requests) private readonly requestsRepo: Repository<Requests>,
         @InjectRepository(Slots) private readonly slotsRepo: Repository<Slots>,
         @InjectRepository(DoctorSchedule) private readonly doctorScheduleRepo: Repository<DoctorSchedule>,
+        @InjectRepository(Reservation) private readonly reservationRepo: Repository<Reservation>,
         private readonly mailService: MailService
     
     ) {}
@@ -133,6 +135,35 @@ export class PatientService {
         });
 
         return slotsFromDb;
+
+    }
+
+    async reserveAppointment (slotId: number, request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const slot = await this.slotsRepo.findOne({ where: { id: slotId, status: SlotsStatusEnum.Available }, relations: { user: true, doctorSchedule: true } });
+        if (!slot) throw new NotFoundException("Slot Not Found!");
+        
+        const slotDay = slot.doctorSchedule.dayOfWeek;
+        const checkSlot = await this.slotsRepo.findOne({ where: { doctorSchedule: { dayOfWeek: slotDay }, reservation: { patient: { id: userId } } } });
+        if (checkSlot) throw new BadRequestException("You can not reserve any appointment for today");
+
+        const newReservation = this.reservationRepo.create({ slot, patient: user });
+        await this.reservationRepo.save(newReservation);
+        slot.status = SlotsStatusEnum.Reserved;
+        await this.slotsRepo.save(slot);
+        
+        const clerks: string[] = [];
+        const targetClerks = await this.userRepo.find({ where: { role: UserRole.Clerk } });
+        targetClerks.forEach((clerk) => clerks.push(clerk.email));
+        
+        const monthName = slot.startAt.toLocaleString("en-US", { month: "long" });
+        await this.mailService.sendEmailToClerks(clerks, `Hi dear clerk the appointment was reserved by ${slot.user.username} for ${monthName} ${slot.startAt.getDate()} between ${slot.startAt.getHours()}:${slot.startAt.getMinutes()} and ${slot.endAt.getHours()}:${slot.endAt.getMinutes()}`);
+        
+        return;
 
     }
 

@@ -8,11 +8,12 @@ import { MailModule } from '../mail/mail.module';
 import { AuthModule } from '../auth/auth.module';
 import { Slots } from '../entity/slots.entity';
 import { DoctorSchedule } from '../entity/doctorSchedule.entity';
+import { Reservation } from '../entity/reserve.entity';
 
 @Module({
   imports: [
   
-    TypeOrmModule.forFeature([User, Requests, Slots, DoctorSchedule]),
+    TypeOrmModule.forFeature([User, Requests, Slots, DoctorSchedule, Reservation]),
     MailModule,
     AuthModule
   

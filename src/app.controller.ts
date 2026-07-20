@@ -8,7 +8,6 @@ import { JwtAuthGuard } from './guards/jwtAuth.guard';
 import { existsSync, mkdirSync } from 'fs';
 
 @ApiTags("App Management")
-@UseGuards(JwtAuthGuard)
 @Controller()
 export class AppController {
   
