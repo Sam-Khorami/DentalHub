@@ -9,11 +9,12 @@ import { AuthModule } from '../auth/auth.module';
 import { Slots } from '../entity/slots.entity';
 import { DoctorSchedule } from '../entity/doctorSchedule.entity';
 import { Reservation } from '../entity/reserve.entity';
+import { Books } from '../entity/book.entity';
 
 @Module({
   imports: [
   
-    TypeOrmModule.forFeature([User, Requests, Slots, DoctorSchedule, Reservation]),
+    TypeOrmModule.forFeature([User, Requests, Slots, DoctorSchedule, Reservation, Books]),
     MailModule,
     AuthModule
   

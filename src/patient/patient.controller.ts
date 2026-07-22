@@ -39,11 +39,12 @@ export class PatientController {
 
   }
 
-  // @Post("book-appointment/:slotId")
-  // async bookAppointment (@Param("slotId", ParseIntPipe) slotId: number) {
+  @Post("book-appointment/:slotId")
+  async bookAppointment (@Param("slotId", ParseIntPipe) slotId: number, @Req() request: Request) {
 
+    await this.patientService.bookAppointment(slotId, request);
+    return { message: "The appointment booked successfully!" }
 
-
-  // }
+  }
 
 }

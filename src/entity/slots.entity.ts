@@ -3,6 +3,7 @@ import { User } from "./user.entity";
 import { SlotsStatusEnum, ServiceTypeEnum } from "../enums/entity.enums";
 import { DoctorSchedule } from "./doctorSchedule.entity";
 import { Reservation } from "./reserve.entity";
+import { Books } from "./book.entity";
 
 @Entity("slots")
 export class Slots {
@@ -30,6 +31,11 @@ export class Slots {
 
     @OneToOne(() => Reservation, (reservation) => reservation.slot)
     reservation!: Reservation;
+
+    @OneToOne(() => Books, (book) => book.slot, {
+    cascade: false,
+    })
+    book!: Books;
 
     @CreateDateColumn()
     createdAt!: Date;

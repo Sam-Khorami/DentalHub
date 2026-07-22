@@ -130,7 +130,7 @@ export class ScheduleJob {
 
     async clearReservedAppointments () {
 
-        const slots = await this.slotsRepo.find({ where: { status: SlotsStatusEnum.Reserved } });
+        const slots = await this.slotsRepo.find({ where: { status: SlotsStatusEnum.Reserved }, relations: { user: true } });
         if (!slots) return;
         
         const now = new Date();
@@ -138,7 +138,7 @@ export class ScheduleJob {
         console.log("Starting For Clearing Reserved Appointments");
         slots.forEach(async (slot) => {
             
-            slot.updatedAt.setHours(slot.updatedAt.getHours() + 1);                       
+            slot.updatedAt.setMinutes(slot.updatedAt.getMinutes() + 30);                       
             if (now > slot.updatedAt) {
                 
                 slot.status = SlotsStatusEnum.Available;
@@ -146,7 +146,7 @@ export class ScheduleJob {
                 await this.reservationRepo.delete({ slot })
 
             }
-            slot.updatedAt.setHours(slot.updatedAt.getHours() - 1);
+            slot.updatedAt.setMinutes(slot.updatedAt.getMinutes() - 30);
 
         })
         

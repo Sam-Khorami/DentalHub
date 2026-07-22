@@ -8,6 +8,7 @@ import { DoctorSchedule } from "./doctorSchedule.entity";
 import { Slots } from "./slots.entity";
 import { UserRole } from "../enums/entity.enums";
 import { Reservation } from "./reserve.entity";
+import { Books } from "./book.entity";
 
 @Entity("user")
 export class User {
@@ -61,6 +62,9 @@ export class User {
 
     @OneToMany(() => Reservation, (reservations) => reservations.patient)
     reservations!: Reservation[];
+
+    @OneToMany(() => Books, (books) => books.patient)
+    books!: Books[];
 
     @BeforeInsert()
     async hashPassword () {

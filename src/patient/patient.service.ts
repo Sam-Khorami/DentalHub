@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
 import { Requests } from '../entity/request.entity';
-import { MoreThanOrEqual, Repository } from 'typeorm';
+import { Between, In, MoreThanOrEqual, Repository } from 'typeorm';
 import { RequestToAdminDto } from './dto/requestToAdmin.dto';
 import { DayOfWeekEnum, SlotsStatusEnum, UserRole } from '../enums/entity.enums';
 import { MailService } from '../mail/mail.service';
@@ -10,6 +10,7 @@ import { Slots } from '../entity/slots.entity';
 import { AvailableAppointmentsDto } from './dto/availableAppointments.dto';
 import { DoctorSchedule } from '../entity/doctorSchedule.entity';
 import { Reservation } from '../entity/reserve.entity';
+import { Books } from '../entity/book.entity';
 
 @Injectable()
 export class PatientService {
@@ -21,6 +22,7 @@ export class PatientService {
         @InjectRepository(Slots) private readonly slotsRepo: Repository<Slots>,
         @InjectRepository(DoctorSchedule) private readonly doctorScheduleRepo: Repository<DoctorSchedule>,
         @InjectRepository(Reservation) private readonly reservationRepo: Repository<Reservation>,
+        @InjectRepository(Books) private readonly booksRepo: Repository<Books>,
         private readonly mailService: MailService
     
     ) {}
@@ -163,6 +165,54 @@ export class PatientService {
         const monthName = slot.startAt.toLocaleString("en-US", { month: "long" });
         await this.mailService.sendEmailToClerks(clerks, `Hi dear clerk the appointment was reserved by ${slot.user.username} for ${monthName} ${slot.startAt.getDate()} between ${slot.startAt.getHours()}:${slot.startAt.getMinutes()} and ${slot.endAt.getHours()}:${slot.endAt.getMinutes()}`);
         
+        return;
+
+    }
+
+    async bookAppointment (slotId: number, request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const slot = await this.slotsRepo.findOne({ where: { id: slotId, status: In([SlotsStatusEnum.Available, SlotsStatusEnum.Reserved]) }, relations: { doctorSchedule: true, book: { patient: true }, user: true } });
+        if (!slot) throw new NotFoundException("Slot Not Found!");
+        if (slot.status === SlotsStatusEnum.Reserved) {
+
+            const patientIdSlot = slot.book.patient.id;
+            if (patientIdSlot !== userId) throw new BadRequestException("You can not Book this Appointment");
+
+        }
+
+        const startOfSlotDay = new Date(slot.startAt);
+        startOfSlotDay.setHours(0, 0, 0, 0);   
+
+        const endOfSlotDay = new Date(slot.startAt);
+        endOfSlotDay.setHours(23, 59, 59, 999);
+
+        const books = await this.booksRepo.find({ where: { patient: { id: userId } }, relations: { slot: true } });
+        const checkSlot = books.find((book) => {
+
+            const start = book.slot.startAt;
+            return ( start >= startOfSlotDay && start <= endOfSlotDay );
+
+        });
+
+        if (checkSlot) throw new BadRequestException("You can not book any appointment for this day");
+
+        slot.status = SlotsStatusEnum.Booked;
+        await this.slotsRepo.save(slot);
+        const newbook = this.booksRepo.create({ patient: { id: userId }, slot: { id: slotId } });
+        console.log(newbook);
+        await this.booksRepo.save(newbook);
+
+        const clerks: string[] = [];
+        const targetClerks = await this.userRepo.find({ where: { role: UserRole.Clerk } });
+        targetClerks.forEach((clerk) => clerks.push(clerk.email));
+
+        const monthName = slot.startAt.toLocaleString("en-US", { month: "long" });
+        await this.mailService.sendEmailToClerks(clerks, `Hi dear clerk the appointment was booked by ${slot.user.username} for ${monthName} ${slot.startAt.getDate()} between ${slot.startAt.getHours()}:${slot.startAt.getMinutes()} and ${slot.endAt.getHours()}:${slot.endAt.getMinutes()}`);
+
         return;
 
     }
