@@ -203,7 +203,6 @@ export class PatientService {
         slot.status = SlotsStatusEnum.Booked;
         await this.slotsRepo.save(slot);
         const newbook = this.booksRepo.create({ patient: { id: userId }, slot: { id: slotId } });
-        console.log(newbook);
         await this.booksRepo.save(newbook);
 
         const clerks: string[] = [];
@@ -214,6 +213,28 @@ export class PatientService {
         await this.mailService.sendEmailToClerks(clerks, `Hi dear clerk the appointment was booked by ${slot.user.username} for ${monthName} ${slot.startAt.getDate()} between ${slot.startAt.getHours()}:${slot.startAt.getMinutes()} and ${slot.endAt.getHours()}:${slot.endAt.getMinutes()}`);
 
         return;
+
+    }
+
+    async getReservedAppointments (request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const appointments = await this.reservationRepo.find({ where: { patient: { id: userId } }, relations: { slot: true } });
+        return appointments;
+
+    }
+
+    async getBookedAppointments (request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const appointments = await this.booksRepo.find({ where: { patient: { id: userId } }, relations: { slot: true } });
+        return appointments;
 
     }
 

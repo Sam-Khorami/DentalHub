@@ -47,4 +47,20 @@ export class PatientController {
 
   }
 
+  @Get("reserved-appointments")
+  async getReservedAppointments (@Req() request: Request) {
+
+    const appointments = await this.patientService.getReservedAppointments(request);
+    return { appointments }
+
+  }
+
+  @Get("booked-appointments")
+  async getBookedAppointments (@Req() request: Request) {
+
+    const appointments = await this.patientService.getBookedAppointments(request);
+    return { appointments }
+
+  }
+
 }
