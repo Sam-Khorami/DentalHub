@@ -238,4 +238,29 @@ export class PatientService {
 
     }
 
+    async cancelAppointment (bookId: number, request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const book = await this.booksRepo.findOne({ where: { id: bookId }, relations: { patient: true, slot: { doctorSchedule: true } } });
+        if (!book) throw new NotFoundException("Book Not Found!");
+
+        const now = new Date();
+
+        const cancelDeadline = new Date(book.slot.startAt);
+        cancelDeadline.setHours(cancelDeadline.getHours() - 24);
+
+        if (now >= cancelDeadline) throw new BadRequestException("Appointments can only be cancelled at least 24 hours before their start time.");
+        
+        const slot = await this.slotsRepo.findOne({ where: { book: { id: bookId } } });
+        slot!.status = SlotsStatusEnum.Available;
+        await this.slotsRepo.save(slot!);
+        await this.booksRepo.remove(book);
+
+        return;
+
+    }
+
 }

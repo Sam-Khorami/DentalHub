@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { PatientService } from './patient.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
@@ -60,6 +60,14 @@ export class PatientController {
 
     const appointments = await this.patientService.getBookedAppointments(request);
     return { appointments }
+
+  }
+
+  @Delete("cancel-appointment/:bookId")
+  async cancelAppointment (@Param("bookId", ParseIntPipe) bookId: number, @Req() request: Request) {
+
+    await this.patientService.cancelAppointment(bookId, request);
+    return { message: "The appointment canceled successfully!" }
 
   }
 
