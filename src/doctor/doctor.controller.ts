@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { DoctorService } from './doctor.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
@@ -6,6 +6,7 @@ import { PermissionGuard } from '../guards/permission.guard';
 import { Permission } from '../decorators/permission.decorator';
 import { SetScheduleDto } from './dto/setSchedule.dto';
 import { ChangeScheduleDto } from './dto/changeSchedule.dto';
+import { DayOfWeekEnum } from '../enums/entity.enums';
 
 @ApiTags("Doctors Management")
 @ApiBearerAuth()
@@ -57,6 +58,15 @@ export class DoctorController {
 
     const schedule = await this.doctorService.getSchedule(scheduleId, request);
     return { schedule }
+
+  }
+
+  @Permission("schedule:read")
+  @Get("booked-appointments")
+  async getBookedSchedule (@Query("day") day: DayOfWeekEnum, @Req() request: Request) {
+
+    const slots = await this.doctorService.getBookedSchedule(day, request);
+    return { slots }
 
   }
 

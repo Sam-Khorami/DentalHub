@@ -6,7 +6,7 @@ import { DoctorSchedule } from '../entity/doctorSchedule.entity';
 import { SetScheduleDto } from './dto/setSchedule.dto';
 import { ChangeScheduleDto } from './dto/changeSchedule.dto';
 import { Slots } from '../entity/slots.entity';
-import { SlotsStatusEnum, UserRole } from '../enums/entity.enums';
+import { DayOfWeekEnum, SlotsStatusEnum, UserRole } from '../enums/entity.enums';
 import { MailService } from '../mail/mail.service';
 
 @Injectable()
@@ -108,6 +108,19 @@ export class DoctorService {
         if (!schedule) throw new NotFoundException("Schedule Not Found!");
 
         return schedule;
+
+    }
+
+    async getBookedSchedule (day: DayOfWeekEnum, request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const slots = await this.slotsRepo.find({ where: { doctorSchedule: { dayOfWeek: day }, user: { id: userId }, status: SlotsStatusEnum.Booked }, relations: { user: true }, select: { id: true, startAt: true, endAt: true, service_type: true, status: true, user: { username: true, role: true } } });
+        if (!slots) throw new NotFoundException("Appointments Not Found For This Day");
+
+        return slots;
 
     }
 
