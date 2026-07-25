@@ -7,11 +7,13 @@ import { Requests } from '../entity/request.entity';
 import { MailModule } from '../mail/mail.module';
 import { AuthModule } from '../auth/auth.module';
 import { Role } from '../entity/role.entity';
+import { Category } from '../entity/category.entity';
+import { Product } from '../entity/product.entity';
 
 @Module({
   imports: [
   
-    TypeOrmModule.forFeature([User, Requests, Role]),
+    TypeOrmModule.forFeature([User, Requests, Role, Category, Product]),
     AuthModule,
     MailModule
   

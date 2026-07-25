@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../guards/jwtAuth.guard';
 import { PermissionGuard } from '../guards/permission.guard';
 import { Permission } from '../decorators/permission.decorator';
 import { AcceptRequestDto } from './dto/acceptRequest.dto';
+import { AddCategoryDto } from './dto/addCategory.dto';
 
 @ApiTags("Admin Management")
 @ApiBearerAuth()
@@ -47,6 +48,15 @@ export class AdminController {
 
     await this.adminService.rejectRequest(userId);
     return { message: "The request rejected successfully!" }
+
+  }
+
+  @Permission("category:add")
+  @Post("add-category")
+  async addCategory (@Body() data: AddCategoryDto) {
+
+    await this.adminService.addCategory(data);
+    return { message: "The category created successfully!" }
 
   }
 

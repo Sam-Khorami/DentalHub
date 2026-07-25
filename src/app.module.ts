@@ -27,6 +27,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { PatientModule } from './patient/patient.module';
 import { Reservation } from './entity/reserve.entity';
 import { Books } from './entity/book.entity';
+import { Product } from './entity/product.entity';
+import { Category } from './entity/category.entity';
 
 @Module({
   imports: [
@@ -42,7 +44,7 @@ import { Books } from './entity/book.entity';
       port: +process.env.DB_PORT!,
       password: process.env.DB_PASS,
       username: process.env.DB_USER,
-      entities: [User, Role, Permission, Ip, Profile, Requests, DoctorSchedule, Slots, Reservation, Books]
+      entities: [User, Role, Permission, Ip, Profile, Requests, DoctorSchedule, Slots, Reservation, Books, Product, Category]
 
     }),
     CacheModule.registerAsync({

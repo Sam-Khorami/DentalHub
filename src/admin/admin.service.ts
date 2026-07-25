@@ -1,11 +1,14 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
 import { Repository } from 'typeorm';
 import { Requests } from '../entity/request.entity';
 import { MailService } from '../mail/mail.service';
 import { Role } from '../entity/role.entity';
-import { UserRole, RequestStatus } from "../enums/entity.enums"
+import { UserRole, RequestStatus } from "../enums/entity.enums";
+import { AddCategoryDto } from './dto/addCategory.dto';
+import { Category } from '../entity/category.entity';
+import { Product } from '../entity/product.entity';
 
 @Injectable()
 export class AdminService {
@@ -15,6 +18,8 @@ export class AdminService {
         @InjectRepository(User) private readonly userRepo: Repository<User>,
         @InjectRepository(Role) private readonly roleRepo: Repository<Role>,
         @InjectRepository(Requests) private readonly requestsRepo: Repository<Requests>,
+        @InjectRepository(Category) private readonly categoryRepo: Repository<Category>,
+        @InjectRepository(Product) private readonly productRepo: Repository<Product>,
         private readonly mailService: MailService
 
     ) {}
@@ -85,6 +90,17 @@ export class AdminService {
         // Sending Notfication To User
         await this.mailService.sendEmailToUser(user.email, `Hi dear ${user.username} your request rejected from our admins`)
 
+        return;
+
+    }
+
+    async addCategory (data: AddCategoryDto) {
+
+        const checkCategory = await this.categoryRepo.findOne({ where: { name: data.name } });
+        if (checkCategory) throw new ConflictException("Category already exists!"); 
+
+        const newCategory = this.categoryRepo.create({ name: data.name });
+        await this.categoryRepo.save(newCategory);
         return;
 
     }
