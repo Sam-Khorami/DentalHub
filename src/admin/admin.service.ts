@@ -105,4 +105,14 @@ export class AdminService {
 
     }
 
+    async deleteCategory (categoryId: number) {
+
+        const category = await this.categoryRepo.findOne({ where: { id: categoryId } });
+        if (!category) throw new NotFoundException("Category Not Found!");
+
+        await this.categoryRepo.remove(category);
+        return;
+
+    }
+
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Param, Req, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Param, Req, UseGuards, ParseIntPipe, Delete } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
@@ -57,6 +57,15 @@ export class AdminController {
 
     await this.adminService.addCategory(data);
     return { message: "The category created successfully!" }
+
+  }
+
+  @Permission("category:delete")
+  @Delete("delete-category/:categoryId")
+  async deleteCategory (@Param("categoryId", ParseIntPipe) categoryId: number) {
+
+    await this.adminService.deleteCategory(categoryId);
+    return { message: "The category deleted successfully!" }
 
   }
 
