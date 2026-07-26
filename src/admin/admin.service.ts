@@ -140,12 +140,15 @@ export class AdminService {
 
     }
 
-    async addProduct (data: AddProductDto) {
+    async addProduct (data: AddProductDto, categoryId: number) {
 
         const checkProduct = await this.productRepo.findOne({ where: { name: data.name } });
         if (checkProduct) throw new ConflictException("Product already exists!");
 
-        const newProduct = this.productRepo.create(data);
+        const checkCategory = await this.categoryRepo.findOne({ where: { id: categoryId } });
+        if (!checkCategory) throw new NotFoundException("Category Not Found!");
+
+        const newProduct = this.productRepo.create({ name: data.name, description: data.description, category: checkCategory });
         await this.productRepo.save(newProduct);
 
         return;

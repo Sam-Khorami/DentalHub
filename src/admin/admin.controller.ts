@@ -91,10 +91,10 @@ export class AdminController {
   }
 
   @Permission("product:add")
-  @Post("add-product")
-  async addProduct (@Body() data: AddProductDto) {
+  @Post("add-product/:categoryId")
+  async addProduct (@Body() data: AddProductDto, @Param("categoryId", ParseIntPipe) categoryId: number) {
 
-    await this.adminService.addProduct(data);
+    await this.adminService.addProduct(data, categoryId);
     return { message: "Product added successfully!" }
 
   }
