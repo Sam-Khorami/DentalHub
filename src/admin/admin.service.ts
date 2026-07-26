@@ -151,4 +151,14 @@ export class AdminService {
 
     }
 
+    async deleteProduct (productId: number) {
+
+        const checkProduct = await this.productRepo.findOne({ where: { id: productId } });
+        if (!checkProduct) throw new NotFoundException("Product Not Found!");    
+
+        await this.productRepo.remove(checkProduct);
+        return;
+
+    }
+
 }

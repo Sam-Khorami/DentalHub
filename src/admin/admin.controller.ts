@@ -98,4 +98,13 @@ export class AdminController {
 
   }
 
+  @Permission("product:delete")
+  @Delete("delete-product/:productId")
+  async deleteProduct (@Param("productId", ParseIntPipe) productId: number) {
+
+    await this.adminService.deleteProduct(productId);
+    return { message: "Product deleted successfully!" }
+
+  }
+
 }
