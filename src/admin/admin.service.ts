@@ -10,6 +10,7 @@ import { AddCategoryDto } from './dto/addCategory.dto';
 import { Category } from '../entity/category.entity';
 import { Product } from '../entity/product.entity';
 import { UpdateCategoryDto } from './dto/updateCategory.dto';
+import { AddProductDto } from './dto/addProduct.dto';
 
 @Injectable()
 export class AdminService {
@@ -129,13 +130,24 @@ export class AdminService {
 
     }
 
-
     async getCategories () {
 
         const categories = await this.categoryRepo.find();
         if (!categories) throw new NotFoundException("Categories Not Found!");
 
         return categories;
+
+    }
+
+    async addProduct (data: AddProductDto) {
+
+        const checkProduct = await this.productRepo.findOne({ where: { name: data.name } });
+        if (checkProduct) throw new ConflictException("Product already exists!");
+
+        const newProduct = this.productRepo.create(data);
+        await this.productRepo.save(newProduct);
+
+        return;
 
     }
 

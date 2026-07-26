@@ -7,6 +7,7 @@ import { Permission } from '../decorators/permission.decorator';
 import { AcceptRequestDto } from './dto/acceptRequest.dto';
 import { AddCategoryDto } from './dto/addCategory.dto';
 import { UpdateCategoryDto } from './dto/updateCategory.dto';
+import { AddProductDto } from './dto/addProduct.dto';
 
 @ApiTags("Admin Management")
 @ApiBearerAuth()
@@ -85,6 +86,15 @@ export class AdminController {
 
     const categories = await this.adminService.getCategories();
     return { categories }
+
+  }
+
+  @Permission("product:add")
+  @Post("add-product")
+  async addProduct (@Body() data: AddProductDto) {
+
+    await this.adminService.addProduct(data);
+    return { message: "Product added successfully!" }
 
   }
 
