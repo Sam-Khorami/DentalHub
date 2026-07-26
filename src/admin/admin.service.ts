@@ -9,6 +9,7 @@ import { UserRole, RequestStatus } from "../enums/entity.enums";
 import { AddCategoryDto } from './dto/addCategory.dto';
 import { Category } from '../entity/category.entity';
 import { Product } from '../entity/product.entity';
+import { UpdateCategoryDto } from './dto/updateCategory.dto';
 
 @Injectable()
 export class AdminService {
@@ -111,6 +112,19 @@ export class AdminService {
         if (!category) throw new NotFoundException("Category Not Found!");
 
         await this.categoryRepo.remove(category);
+        return;
+
+    }
+
+    async updateCategory (categoryId: number, data: UpdateCategoryDto) {
+
+        const category = await this.categoryRepo.findOne({ where: { id: categoryId } });
+        if (!category) throw new NotFoundException("Category Not Found!");
+
+        const checkCategory = await this.categoryRepo.findOne({ where: { name: data.name } });
+        if (checkCategory) throw new ConflictException("Category with this name already exists!");
+
+        await this.categoryRepo.update({ id: categoryId }, { name: data.name });
         return;
 
     }
