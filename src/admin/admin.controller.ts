@@ -8,6 +8,7 @@ import { AcceptRequestDto } from './dto/acceptRequest.dto';
 import { AddCategoryDto } from './dto/addCategory.dto';
 import { UpdateCategoryDto } from './dto/updateCategory.dto';
 import { AddProductDto } from './dto/addProduct.dto';
+import { UpdateProductDto } from './dto/updateProduct.dto';
 
 @ApiTags("Admin Management")
 @ApiBearerAuth()
@@ -104,6 +105,15 @@ export class AdminController {
 
     await this.adminService.deleteProduct(productId);
     return { message: "Product deleted successfully!" }
+
+  }
+
+  @Permission("product:update")
+  @Put("update-product/:productId")
+  async updateProduct (@Param("productId", ParseIntPipe) productId: number, @Body() data: UpdateProductDto) {
+
+    await this.adminService.updateProduct(productId, data);
+    return { message: "Product updated successfully!" }
 
   }
 

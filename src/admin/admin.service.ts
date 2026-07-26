@@ -11,6 +11,7 @@ import { Category } from '../entity/category.entity';
 import { Product } from '../entity/product.entity';
 import { UpdateCategoryDto } from './dto/updateCategory.dto';
 import { AddProductDto } from './dto/addProduct.dto';
+import { UpdateProductDto } from './dto/updateProduct.dto';
 
 @Injectable()
 export class AdminService {
@@ -157,6 +158,19 @@ export class AdminService {
         if (!checkProduct) throw new NotFoundException("Product Not Found!");    
 
         await this.productRepo.remove(checkProduct);
+        return;
+
+    }
+
+    async updateProduct (productId: number, data: UpdateProductDto) {
+
+        const product = await this.productRepo.findOne({ where: { id: productId } });
+        if (!product) throw new NotFoundException("Product Not Found!");
+
+        const checkProduct = await this.productRepo.findOne({ where: { name: data.name } });
+        if (checkProduct) throw new ConflictException("Product with this name already exists!");
+
+        await this.productRepo.update({ id: productId }, data);
         return;
 
     }
