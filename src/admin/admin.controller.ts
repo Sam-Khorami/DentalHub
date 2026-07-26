@@ -117,4 +117,13 @@ export class AdminController {
 
   }
 
+  @Permission("product:read")
+  @Get("get-products")
+  async getProducts () {
+
+    const products = await this.adminService.getProducts();
+    return { products }
+
+  }
+
 }

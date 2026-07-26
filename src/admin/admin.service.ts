@@ -175,4 +175,13 @@ export class AdminService {
 
     }
 
+    async getProducts () {
+
+        const products = await this.productRepo.find();
+        if (!products) throw new NotFoundException("Products Not Found!");
+        
+        return products;
+
+    }
+
 }
