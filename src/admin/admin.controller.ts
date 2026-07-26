@@ -54,7 +54,7 @@ export class AdminController {
 
   @Permission("category:create")
   @Post("add-category")
-  async addCategory (@Body() data: AddCategoryDto) {
+  async addCategory (@Body() data: AddCategoryDto) { 
 
     await this.adminService.addCategory(data);
     return { message: "The category created successfully!" }
@@ -76,6 +76,15 @@ export class AdminController {
 
     await this.adminService.updateCategory(categoryId, data);
     return { message: "Category updated successfully!" }
+
+  }
+
+  @Permission("category:read")
+  @Get("get-categories")
+  async getCategory () {
+
+    const categories = await this.adminService.getCategories();
+    return { categories }
 
   }
 

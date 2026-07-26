@@ -129,4 +129,14 @@ export class AdminService {
 
     }
 
+
+    async getCategories () {
+
+        const categories = await this.categoryRepo.find();
+        if (!categories) throw new NotFoundException("Categories Not Found!");
+
+        return categories;
+
+    }
+
 }
