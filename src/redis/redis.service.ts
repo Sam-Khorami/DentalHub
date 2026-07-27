@@ -1,5 +1,6 @@
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
+import { CartItem } from '../types/interfaces.type';
 
 @Injectable()
 export class RedisService {
@@ -10,7 +11,13 @@ export class RedisService {
 
     ) {}
 
-    async set (key: string, value: unknown, ttl?: number) {
+    async setProduct (key: string, value: CartItem[], ttl?: number) {
+
+        return await this.cacheManager.set(key, value, ttl);
+
+    }
+
+    async setOtp (key: string, value: string, ttl?: number) {
 
         return await this.cacheManager.set(key, value, ttl);
 

@@ -41,7 +41,7 @@ export class AuthService {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Sending Otp And Set it up in redis
-        await this.redisService.set(`otp:${data.username}`, otp, 120000);
+        await this.redisService.setOtp(`otp:${data.username}`, otp, 120000);
         await this.mailService.sendOtp(data.email, otp);
 
         return;
@@ -64,7 +64,7 @@ export class AuthService {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Sending Otp Code To Email And Set it up in redis
-        await this.redisService.set(`otp:${data.username}`, otp, 120000);
+        await this.redisService.setOtp(`otp:${data.username}`, otp, 120000);
         this.mailService.sendOtp(user.email, otp);
         return;
         
