@@ -16,12 +16,12 @@ export class AddProductDto {
 
     @ApiProperty({ example: 10 })
     @IsInt({ message: "The quantity field must be an integer" })
-    @IsOptional()
+    @IsNotEmpty({ message: "The quantity field can not be empty" })
     quantity!: number;
 
     @ApiProperty({ example: 1000000 })
     @IsInt({ message: "The price field must be an integer" })
-    @IsOptional()
+    @IsNotEmpty({ message: "The price field can not be empty" })
     price!: number;
 
 }

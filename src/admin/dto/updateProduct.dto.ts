@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 
 export class UpdateProductDto {
@@ -12,5 +12,15 @@ export class UpdateProductDto {
     @IsString({ message: "The description must be a string" })
     @IsOptional()
     description!: string;
+
+    @ApiProperty({ example: 10 })
+    @IsInt({ message: "The quantity field must be an integer" })
+    @IsOptional()
+    quantity!: number;
+    
+    @ApiProperty({ example: 1000000 })
+    @IsInt({ message: "The price field must be an integer" })
+    @IsOptional()
+    price!: number;
 
 }
