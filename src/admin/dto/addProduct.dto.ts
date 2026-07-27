@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 
 
@@ -10,9 +10,18 @@ export class AddProductDto {
     @IsNotEmpty({ message: "The name field can not be empty" })
     name!: string;
 
-    
     @IsString({ message: "The description field can not be empty!" })
     @IsOptional()
     description!: string
+
+    @ApiProperty({ example: 10 })
+    @IsInt({ message: "The quantity field must be an integer" })
+    @IsOptional()
+    quantity!: number;
+
+    @ApiProperty({ example: 1000000 })
+    @IsInt({ message: "The price field must be an integer" })
+    @IsOptional()
+    price!: number;
 
 }

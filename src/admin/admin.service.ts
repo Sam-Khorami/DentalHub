@@ -148,7 +148,7 @@ export class AdminService {
         const checkCategory = await this.categoryRepo.findOne({ where: { id: categoryId } });
         if (!checkCategory) throw new NotFoundException("Category Not Found!");
 
-        const newProduct = this.productRepo.create({ name: data.name, description: data.description, category: checkCategory });
+        const newProduct = this.productRepo.create({ name: data.name, description: data.description, quantity: data.quantity, price: data.price, category: checkCategory });
         await this.productRepo.save(newProduct);
 
         return;

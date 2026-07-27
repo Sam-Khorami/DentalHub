@@ -11,6 +11,12 @@ export class Product {
     @Column({ type: "varchar", unique: true, nullable: false })
     name!: string;
 
+    @Column({ type: "int", nullable: false })
+    quantity!: number;
+
+    @Column({ type: "bigint", nullable: false })
+    price!: number;
+
     @Column({ type: "text", nullable: true })
     description!: string;
 
