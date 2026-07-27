@@ -26,7 +26,9 @@ export class BasketService {
         if (!product) throw new NotFoundException("Product Not Found!");
         if (product.quantity < quantity) throw new BadRequestException("Quantity is not enough!");
 
-        await this.cacheManager.set(`cart:${userId}`, [ { productId, quantity } ], 86400000);
+        const totalPrice = quantity * product.price;
+
+        await this.cacheManager.set(`cart:${userId}`, [ { productId, quantity, totalPrice } ], 86400000);
         return;
 
     }
