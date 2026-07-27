@@ -30,6 +30,7 @@ import { Books } from './entity/book.entity';
 import { Product } from './entity/product.entity';
 import { Category } from './entity/category.entity';
 import { BasketModule } from './basket/basket.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -68,7 +69,8 @@ import { BasketModule } from './basket/basket.module';
     DoctorModule,
     TasksModule,
     PatientModule,
-    BasketModule
+    BasketModule,
+    RedisModule
 
   ],
   controllers: [AppController],

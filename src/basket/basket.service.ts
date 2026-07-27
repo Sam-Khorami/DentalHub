@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
 import { Repository } from 'typeorm';
 import { Product } from '../entity/product.entity';
-import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class BasketService {
@@ -12,7 +12,7 @@ export class BasketService {
 
         @InjectRepository(User) private readonly userRepo: Repository<User>,
         @InjectRepository(Product) private readonly productRepo: Repository<Product>,
-        @Inject(CACHE_MANAGER) private cacheManager: Cache
+        private readonly redisService: RedisService
 
     ) {}
 
@@ -37,7 +37,7 @@ export class BasketService {
 
         const totalPrice = quantity * product.price;
 
-        await this.cacheManager.set(`cart:${userId}`, [ { productId, quantity, totalPrice } ], 86400000);
+        await this.redisService.set(`cart:${userId}`, [ { productId, quantity, totalPrice } ], 86400000);
         return;
 
     }

@@ -11,6 +11,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { MailModule } from '../mail/mail.module';
 import { MailService } from '../mail/mail.service';
 import { Permission } from '../entity/permission.entity';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { Permission } from '../entity/permission.entity';
 
     }),
     TypeOrmModule.forFeature([User, Role, Permission]),
-    MailModule
+    MailModule,
+    RedisModule
     
   
   ],

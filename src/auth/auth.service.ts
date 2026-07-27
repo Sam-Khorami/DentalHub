@@ -10,7 +10,7 @@ import { OtpVerificationDto } from './dto/otpVerification.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import bcrypt from "bcrypt";
-import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +20,7 @@ export class AuthService {
         @InjectRepository(User) private readonly userRepo: Repository<User>,
         @InjectRepository(Role) private readonly roleRepo: Repository<Role>,
         @InjectRepository(Permission) private readonly permissionRepo: Repository<Permission>,
-        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        private readonly redisService: RedisService,
         private mailService: MailService,
         private jwtService: JwtService
 
@@ -41,7 +41,7 @@ export class AuthService {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Sending Otp And Set it up in redis
-        await this.cacheManager.set(`otp:${data.username}`, otp, 120000);
+        await this.redisService.set(`otp:${data.username}`, otp, 120000);
         await this.mailService.sendOtp(data.email, otp);
 
         return;
@@ -64,7 +64,7 @@ export class AuthService {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
         // Sending Otp Code To Email And Set it up in redis
-        await this.cacheManager.set(`otp:${data.username}`, otp, 120000);
+        await this.redisService.set(`otp:${data.username}`, otp, 120000);
         this.mailService.sendOtp(user.email, otp);
         return;
         
@@ -93,7 +93,7 @@ export class AuthService {
         if (!user) throw new NotFoundException("User Not Found!");
 
         // Checking Otp Exsiting & Expiration
-        const otp: string | undefined = await this.cacheManager.get(`otp:${data.username}`);
+        const otp: string | unknown = await this.redisService.get(`otp:${data.username}`);
         if (!otp) throw new BadRequestException("Otp is expired!!");
         if (data.otp !== otp) throw new BadRequestException("Your entered otp does not match!"); 
 
