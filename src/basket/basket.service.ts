@@ -16,6 +16,15 @@ export class BasketService {
 
     ) {}
 
+    async getProducts () {
+
+        const products = await this.productRepo.find();
+        if (!products) throw new NotFoundException("Products Not Found!");
+        
+        return products;
+
+    }
+
     async addToBasket (productId: number, quantity: number, request: Request) {
 
         const userId = request["user"].userId;

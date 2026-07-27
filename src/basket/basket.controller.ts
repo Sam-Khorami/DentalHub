@@ -1,4 +1,4 @@
-import { Controller, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
 import { BasketService } from './basket.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
@@ -10,6 +10,14 @@ import { JwtAuthGuard } from '../guards/jwtAuth.guard';
 export class BasketController {
 
   constructor(private readonly basketService: BasketService) {}
+
+  @Get("get-products")
+  async getProducts () {
+
+    const products = await this.basketService.getProducts();
+    return { products }
+
+  }
 
   @Post("add-to-basket/:productId/:quantity")
   async addToBasket (@Param("productId", ParseIntPipe) productId: number, @Param("quantity", ParseIntPipe) quantity: number, @Req() request: Request) {
