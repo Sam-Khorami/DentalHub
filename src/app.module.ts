@@ -29,6 +29,7 @@ import { Reservation } from './entity/reserve.entity';
 import { Books } from './entity/book.entity';
 import { Product } from './entity/product.entity';
 import { Category } from './entity/category.entity';
+import { BasketModule } from './basket/basket.module';
 
 @Module({
   imports: [
@@ -66,7 +67,8 @@ import { Category } from './entity/category.entity';
     AdminModule,
     DoctorModule,
     TasksModule,
-    PatientModule
+    PatientModule,
+    BasketModule
 
   ],
   controllers: [AppController],
