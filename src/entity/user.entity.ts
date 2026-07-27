@@ -9,6 +9,7 @@ import { Slots } from "./slots.entity";
 import { UserRole } from "../enums/entity.enums";
 import { Reservation } from "./reserve.entity";
 import { Books } from "./book.entity";
+import { Product } from "./product.entity";
 
 @Entity("user")
 export class User {
@@ -65,6 +66,14 @@ export class User {
 
     @OneToMany(() => Books, (books) => books.patient)
     books!: Books[];
+
+    @ManyToMany(() => Product, (product) => product.baskets)
+    @JoinTable({
+        name: "basket_items",
+        joinColumn: { name: "userId", referencedColumnName: "id" },
+        inverseJoinColumn: { name: "productId", referencedColumnName: "id" }
+    })
+    basketItems!: Product[];
 
     @BeforeInsert()
     async hashPassword () {

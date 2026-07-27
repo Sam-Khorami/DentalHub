@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Category } from "./category.entity";
+import { User } from "./user.entity";
 
 @Entity("products")
 export class Product {
@@ -21,5 +22,8 @@ export class Product {
 
     @ManyToOne(() => Category, (category) => category.products)
     category!: Category;
+
+    @ManyToMany(() => User, (user) => user.basketItems)
+    baskets!: User[];
 
 }
