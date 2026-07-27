@@ -23,7 +23,4 @@ export class Product {
     @ManyToOne(() => Category, (category) => category.products)
     category!: Category;
 
-    @ManyToMany(() => User, (user) => user.basketItems)
-    baskets!: User[];
-
 }

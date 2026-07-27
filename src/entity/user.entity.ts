@@ -67,14 +67,6 @@ export class User {
     @OneToMany(() => Books, (books) => books.patient)
     books!: Books[];
 
-    @ManyToMany(() => Product, (product) => product.baskets)
-    @JoinTable({
-        name: "basket_items",
-        joinColumn: { name: "userId", referencedColumnName: "id" },
-        inverseJoinColumn: { name: "productId", referencedColumnName: "id" }
-    })
-    basketItems!: Product[];
-
     @BeforeInsert()
     async hashPassword () {
 
