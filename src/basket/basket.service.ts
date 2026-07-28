@@ -75,4 +75,17 @@ export class BasketService {
 
     }
 
+    async getBasketItems (request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const cart = await this.redisService.get(`cart:${userId}`);
+        if (!cart) throw new NotFoundException("Cart List Is Empty");
+
+        return cart;
+
+    }
+
 }

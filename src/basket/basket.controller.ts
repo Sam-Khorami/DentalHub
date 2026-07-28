@@ -35,4 +35,12 @@ export class BasketController {
 
   }
 
+  @Get("basket-items")
+  async getBasketItems (@Req() request: Request) {
+
+    const cart = await this.basketService.getBasketItems(request);
+    return { cart }
+
+  }
+
 }
