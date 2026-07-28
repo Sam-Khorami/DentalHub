@@ -62,6 +62,17 @@ export class BasketService {
         const user = await this.userRepo.findOne({ where: { id: userId } });
         if (!user) throw new NotFoundException("User Not Found!");
 
+        const product = await this.productRepo.findOne({ where: { id: productId } });
+        if (!product) throw new NotFoundException("Product Not Found!");
+
+        let cart = await this.redisService.get(`cart:${userId}`) as CartItem[] ?? [];
+        const exists = cart.find((item) => item.productId === productId);
+        if (!exists) throw new NotFoundException("Product Not Found");
+
+        cart = cart.filter((item) => item.productId !== productId);
+        await this.redisService.setProduct(`cart:${userId}`, cart, 86400000);
+        return;
+
     }
 
 }

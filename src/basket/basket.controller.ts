@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
 import { BasketService } from './basket.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
@@ -27,5 +27,12 @@ export class BasketController {
 
   }
 
+  @Delete("remove-from-basket/:productId")
+  async removeFromBasket (@Param("productId", ParseIntPipe) productId: number, @Req() request: Request) {
+
+    await this.basketService.removeFromBasket(request, productId);
+    return { message: "Product removed from your basket successfully!" }
+
+  }
 
 }

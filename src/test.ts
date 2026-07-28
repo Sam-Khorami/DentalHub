@@ -1,4 +1,6 @@
-const now = new Date();
+let lst = [ { productId: 1, totalPrice: 100000 }, { productId: 10, totalPrice: 300000 } ];
 
+const id = 1;
 
-console.log(now.getDate());
+lst = lst.filter((item) => item.productId !== id);
+console.log(lst);
