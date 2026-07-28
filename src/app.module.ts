@@ -33,6 +33,7 @@ import { BasketModule } from './basket/basket.module';
 import { RedisModule } from './redis/redis.module';
 import { OrderModule } from './order/order.module';
 import { ZibalPaymentModule } from './zibal-payment/zibal-payment.module';
+import { Orders } from './entity/order.entity';
 
 @Module({
   imports: [
@@ -48,7 +49,7 @@ import { ZibalPaymentModule } from './zibal-payment/zibal-payment.module';
       port: +process.env.DB_PORT!,
       password: process.env.DB_PASS,
       username: process.env.DB_USER,
-      entities: [User, Role, Permission, Ip, Profile, Requests, DoctorSchedule, Slots, Reservation, Books, Product, Category]
+      entities: [User, Role, Permission, Ip, Profile, Requests, DoctorSchedule, Slots, Reservation, Books, Product, Category, Orders]
 
     }),
     CacheModule.registerAsync({
