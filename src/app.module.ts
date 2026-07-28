@@ -31,6 +31,8 @@ import { Product } from './entity/product.entity';
 import { Category } from './entity/category.entity';
 import { BasketModule } from './basket/basket.module';
 import { RedisModule } from './redis/redis.module';
+import { OrderModule } from './order/order.module';
+import { ZibalPaymentModule } from './zibal-payment/zibal-payment.module';
 
 @Module({
   imports: [
@@ -70,7 +72,9 @@ import { RedisModule } from './redis/redis.module';
     TasksModule,
     PatientModule,
     BasketModule,
-    RedisModule
+    RedisModule,
+    OrderModule,
+    ZibalPaymentModule
 
   ],
   controllers: [AppController],
