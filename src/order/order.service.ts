@@ -56,4 +56,42 @@ export class OrderService {
 
     }
 
+    async verifyPayment (request: Request, trackId: number) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const order = await this.orderRepo.findOne({ where: { user: { id: userId }, status: OrderStatusEnum.Pending } });
+        if (!order) throw new NotFoundException("Order Not Found!");
+
+        const cart = await this.redisService.get(`cart:${userId}`) as CartItem[] ?? [];
+        if (cart.length === 0 || !cart) {
+
+            await this.orderRepo.remove(order);
+            throw new BadRequestException("Basket Is Empty");
+
+        }
+
+
+        const data = await this.zibalPaymentService.verifyPayment(trackId);
+        
+        cart.forEach(async (item) => {
+
+            const product = await this.productRepo.findOne({ where: { id: item.productId } });
+            product!.quantity -= item.quantity;
+            await this.productRepo.save(product!);
+
+        });
+        
+        const now = new Date();
+        order.status = OrderStatusEnum.Payed;
+        order.payedAt = now;
+        await this.orderRepo.save(order);
+
+
+        return data;
+
+    }
+
 }

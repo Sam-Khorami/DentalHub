@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
@@ -23,6 +23,14 @@ export class OrderController {
   async startPayment (@Req() request: Request) {
 
     const data = await this.orderService.startPayment(request);
+    return { data, paymentUrl: `https://gateway.zibal.ir/start/${data.trackId}` }
+
+  }
+
+  @Post("verify-payment/:trackId")
+  async verifyPayment (@Req() request: Request, @Param("trackId", ParseIntPipe) trackId: number) {
+
+    const data = await this.orderService.verifyPayment(request, trackId);
     return { data }
 
   }
