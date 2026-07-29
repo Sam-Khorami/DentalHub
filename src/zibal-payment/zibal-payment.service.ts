@@ -33,4 +33,21 @@ export class ZibalPaymentService {
 
     }
 
+    async verifyPayment (trackId: number) {
+
+        const requestUrl = `${this.basePaymenyUrl}/v1/verify`;
+        const payload = { merchant: this.merchant, trackId }
+
+        const request = await axios.post(requestUrl, payload, { headers: { "Content-Type": "application/json" } });
+        if (request.data.result !== 100) {
+
+            console.log(request.data);
+            throw new BadRequestException("Something Went wrong while payment");
+
+        }
+        
+        return request.data;
+
+    }
+
 }
