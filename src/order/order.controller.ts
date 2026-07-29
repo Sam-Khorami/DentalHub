@@ -19,4 +19,12 @@ export class OrderController {
 
   }
 
+  @Post("start-payment")
+  async startPayment (@Req() request: Request) {
+
+    const data = await this.orderService.startPayment(request);
+    return { data }
+
+  }
+
 }

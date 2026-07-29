@@ -2,10 +2,11 @@ import { BadRequestException, ConflictException, Injectable, NotFoundException }
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
 import { Repository } from 'typeorm';
-import { Orders } from '../entity/order.entity';
+import { Orders, OrderStatusEnum } from '../entity/order.entity';
 import { RedisService } from '../redis/redis.service';
 import { CartItem } from '../types/interfaces.type';
 import { Product } from '../entity/product.entity';
+import { ZibalPaymentService } from '../zibal-payment/zibal-payment.service';
 
 @Injectable()
 export class OrderService {
@@ -15,6 +16,7 @@ export class OrderService {
         @InjectRepository(User) private readonly userRepo: Repository<User>,
         @InjectRepository(Orders) private readonly orderRepo: Repository<Orders>,
         @InjectRepository(Product) private readonly productRepo: Repository<Product>,
+        private readonly zibalPaymentService: ZibalPaymentService,
         private readonly redisService: RedisService
 
     ) {}
@@ -37,6 +39,20 @@ export class OrderService {
         const newOrder = this.orderRepo.create({ totalPrice: price, user });
         await this.orderRepo.save(newOrder);
         return;
+
+    }
+
+    async startPayment (request: Request) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const order = await this.orderRepo.findOne({ where: { user: { id: userId }, status: OrderStatusEnum.Pending } });
+        if (!order) throw new NotFoundException("Order Not Found!");
+
+        const data = await this.zibalPaymentService.requestPayment(order.totalPrice);
+        return data;
 
     }
 
