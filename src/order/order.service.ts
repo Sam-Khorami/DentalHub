@@ -7,6 +7,7 @@ import { RedisService } from '../redis/redis.service';
 import { CartItem } from '../types/interfaces.type';
 import { Product } from '../entity/product.entity';
 import { ZibalPaymentService } from '../zibal-payment/zibal-payment.service';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class OrderService {
@@ -17,7 +18,8 @@ export class OrderService {
         @InjectRepository(Orders) private readonly orderRepo: Repository<Orders>,
         @InjectRepository(Product) private readonly productRepo: Repository<Product>,
         private readonly zibalPaymentService: ZibalPaymentService,
-        private readonly redisService: RedisService
+        private readonly redisService: RedisService,
+        private readonly mailService: MailService
 
     ) {}
 
@@ -73,7 +75,6 @@ export class OrderService {
 
         }
 
-
         const data = await this.zibalPaymentService.verifyPayment(trackId);
         
         cart.forEach(async (item) => {
@@ -91,6 +92,7 @@ export class OrderService {
         await this.orderRepo.save(order);
 
         await this.redisService.delete(`cart:${userId}`);
+        await this.mailService.sendEmailToUser(user.email, `Hi dear ${user.username} thanks for your purchase\nYour order will arrive in three days.`);
         return data;
 
     }
