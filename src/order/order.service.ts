@@ -79,6 +79,7 @@ export class OrderService {
         cart.forEach(async (item) => {
 
             const product = await this.productRepo.findOne({ where: { id: item.productId } });
+            if (product!.quantity < item.quantity) throw new BadRequestException("Not enough quantity for this item");
             product!.quantity -= item.quantity;
             await this.productRepo.save(product!);
 
@@ -89,7 +90,7 @@ export class OrderService {
         order.payedAt = now;
         await this.orderRepo.save(order);
 
-
+        await this.redisService.delete(`cart:${userId}`);
         return data;
 
     }
