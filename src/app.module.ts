@@ -34,6 +34,7 @@ import { RedisModule } from './redis/redis.module';
 import { OrderModule } from './order/order.module';
 import { ZibalPaymentModule } from './zibal-payment/zibal-payment.module';
 import { Orders } from './entity/order.entity';
+import { LikesModule } from './likes/likes.module';
 
 @Module({
   imports: [
@@ -75,7 +76,8 @@ import { Orders } from './entity/order.entity';
     BasketModule,
     RedisModule,
     OrderModule,
-    ZibalPaymentModule
+    ZibalPaymentModule,
+    LikesModule
 
   ],
   controllers: [AppController],
