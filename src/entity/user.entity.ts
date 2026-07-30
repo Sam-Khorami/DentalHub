@@ -11,6 +11,7 @@ import { Reservation } from "./reserve.entity";
 import { Books } from "./book.entity";
 import { Product } from "./product.entity";
 import { Orders } from "./order.entity";
+import { Comments } from "./comments.entity";
 
 @Entity("user")
 export class User {
@@ -70,6 +71,9 @@ export class User {
 
     @OneToMany(() => Orders, (orders) => orders.user)
     orders!: Orders[];
+
+    @OneToMany(() => Comments, (comments) => comments.user)
+    comments!: Comments[];
 
     @BeforeInsert()
     async hashPassword () {
