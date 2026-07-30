@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity";
 import { Product } from "./product.entity";
+import { CommentLikes } from "./commentLikes.entity";
 
 @Entity("comments")
 export class Comments {
@@ -25,5 +26,8 @@ export class Comments {
 
     @ManyToOne(() => Product, (product) => product.comments)
     product!: Product;
+
+    @OneToMany(() => CommentLikes, (likes) => likes.comment)
+    likes!: CommentLikes[];
 
 }
