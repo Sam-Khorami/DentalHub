@@ -10,7 +10,7 @@ import { CommentLikes } from '../entity/commentLikes.entity';
 @Module({
   imports: [
 
-    TypeOrmModule.forFeature([User, Product, Comments, CommentLikes])
+    TypeOrmModule.forFeature([User, Comments, CommentLikes])
 
   ],
   controllers: [LikesController],

@@ -12,7 +12,6 @@ export class LikesService {
     constructor (
 
         @InjectRepository(User) private readonly userRepo: Repository<User>,
-        @InjectRepository(Product) private readonly productRepo: Repository<Product>,
         @InjectRepository(Comments) private readonly commentRepo: Repository<Comments>,
         @InjectRepository(CommentLikes) private readonly commentLikesRepo: Repository<CommentLikes>,
 
