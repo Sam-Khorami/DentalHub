@@ -37,4 +37,21 @@ export class LikesService {
 
     }
 
+    async unlikeComment (request: Request, commentId: number) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const comment = await this.commentRepo.findOne({ where: { id: commentId } });
+        if (!comment) throw new NotFoundException("Comment Not Found!");
+
+        const checkLike = await this.commentLikesRepo.findOne({ where: { user: { id: userId }, comment: { id: commentId } } });
+        if (!checkLike) throw new NotFoundException("Like Not Found");
+
+        await this.commentLikesRepo.remove(checkLike);
+        return;
+
+    }
+
 }
