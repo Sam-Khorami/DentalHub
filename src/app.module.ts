@@ -37,6 +37,7 @@ import { Orders } from './entity/order.entity';
 import { LikesModule } from './likes/likes.module';
 import { Comments } from './entity/comments.entity';
 import { CommentLikes } from './entity/commentLikes.entity';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -79,7 +80,8 @@ import { CommentLikes } from './entity/commentLikes.entity';
     RedisModule,
     OrderModule,
     ZibalPaymentModule,
-    LikesModule
+    LikesModule,
+    CommentsModule
 
   ],
   controllers: [AppController],
