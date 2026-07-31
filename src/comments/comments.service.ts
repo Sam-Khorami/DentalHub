@@ -66,4 +66,18 @@ export class CommentsService {
 
     }
 
+    async getComments (page: number, limit: number, productId: number) {
+
+        const product = await this.productRepo.findOne({ where: { id: productId }, relations: { comments: true } });
+        if (!product) throw new NotFoundException("Product Not Found!");
+        if (product.comments.length === 0) throw new BadRequestException("No Comment Found!");
+
+        const skip = (page - 1) * limit;
+
+        const [ comments, totalItems ] = await this.commentsRepo.findAndCount({ where: { product: { id: productId } }, take: limit, skip });
+        return { currentPage: page, pageSize: limit, totalItems, comments }
+
+    }
+
+
 }
