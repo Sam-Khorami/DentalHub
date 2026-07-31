@@ -1,8 +1,9 @@
-import { Body, Controller, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, ParseIntPipe, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
 import { SetCommentDto } from './dto/setComment.dto';
+import { EditCommentDto } from './dto/editComment.dto';
 
 
 @ApiTags("Comments Management")
@@ -25,7 +26,15 @@ export class CommentsController {
   async removeComment (@Param("commentId", ParseIntPipe) commentId: number, @Req() request: Request) {
 
     await this.commentsService.removeComment(request, commentId);
-    return { message: "Your Comment Deleted Successfully!" }
+    return { message: "Your comment deleted successfully!" }
+
+  }
+
+  @Put("edit-comment/:commentId")
+  async editComment (@Body() data: EditCommentDto, @Param("commentId", ParseIntPipe) commentId: number, @Req() request: Request) {
+
+    await this.commentsService.editComment(data, commentId, request);
+    return { message: "Your comment edited successfully!" }
 
   }
 
