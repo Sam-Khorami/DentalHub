@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from '../entity/product.entity';
 import { Repository } from 'typeorm';
@@ -28,6 +28,21 @@ export class CommentsService {
 
         const newComment = this.commentsRepo.create({ title: data.title, description: data.description, user, product });
         await this.commentsRepo.save(newComment);
+        return;
+
+    }
+
+    async removeComment (request: Request, commentId: number) {
+
+        const userId = request["user"].userId;
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        const comment = await this.commentsRepo.findOne({ where: { id: commentId }, relations: { user: true } });
+        if (!comment) throw new NotFoundException("Comment Not Found!");
+        if (comment.user.id !== userId) throw new BadRequestException("You can not delete this comment");
+
+        await this.commentsRepo.remove(comment);
         return;
 
     }

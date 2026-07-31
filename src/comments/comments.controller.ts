@@ -21,4 +21,12 @@ export class CommentsController {
 
   }
 
+  @Post("remove-comment/:commentId")
+  async removeComment (@Param("commentId", ParseIntPipe) commentId: number, @Req() request: Request) {
+
+    await this.commentsService.removeComment(request, commentId);
+    return { message: "Your Comment Deleted Successfully!" }
+
+  }
+
 }
