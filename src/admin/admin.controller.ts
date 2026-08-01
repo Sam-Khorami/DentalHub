@@ -126,4 +126,13 @@ export class AdminController {
 
   }
 
+  @Permission("comment:delete")
+  @Delete("remove-comment/:commentId")
+  async deleteComment (@Param("commentId", ParseIntPipe) commentId: number) {
+
+    await this.adminService.deleteComment(commentId);
+    return { message: "Comment removed successfully!" }
+
+  }
+
 }

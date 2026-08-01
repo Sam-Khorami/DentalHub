@@ -12,6 +12,7 @@ import { Product } from '../entity/product.entity';
 import { UpdateCategoryDto } from './dto/updateCategory.dto';
 import { AddProductDto } from './dto/addProduct.dto';
 import { UpdateProductDto } from './dto/updateProduct.dto';
+import { Comments } from '../entity/comments.entity';
 
 @Injectable()
 export class AdminService {
@@ -23,6 +24,7 @@ export class AdminService {
         @InjectRepository(Requests) private readonly requestsRepo: Repository<Requests>,
         @InjectRepository(Category) private readonly categoryRepo: Repository<Category>,
         @InjectRepository(Product) private readonly productRepo: Repository<Product>,
+        @InjectRepository(Comments) private readonly commentRepo: Repository<Comments>,
         private readonly mailService: MailService
 
     ) {}
@@ -184,6 +186,16 @@ export class AdminService {
         if (!products) throw new NotFoundException("Products Not Found!");
         
         return products;
+
+    }
+
+    async deleteComment (commentId: number) {
+
+        const comment = await this.commentRepo.findOne({ where: { id: commentId } });
+        if (!comment) throw new NotFoundException("Comment Not Found!");
+
+        await this.commentRepo.remove(comment);
+        return;
 
     }
 
