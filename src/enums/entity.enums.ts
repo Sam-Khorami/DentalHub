@@ -56,3 +56,20 @@ export enum ServiceTypeEnum {
     RetainerFitting = "retainerFitting", 
     OrthodonticImpression = "orthodonticImpression" 
 }
+
+export enum OrderStatusEnum { 
+    Pending = "pending", 
+    Payed = "payed", 
+    Canceled = "canceled"
+}
+
+export enum CurrencyEnum { 
+    IRT = "irt", 
+    IRR = "irr" 
+} 
+
+export enum WalletStatus {
+    Active = "active",
+    Closed = "closed",
+    Blocked = "blocked"
+}
