@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "./user.entity";
+import { OrderStatusEnum } from "../enums/entity.enums";
 
-export enum OrderStatusEnum { Pending = "pending", Payed = "payed", Canceled = "canceled" }
 
 @Entity("orders")
 export class Orders {
