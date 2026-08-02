@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { CurrencyEnum, WalletStatus } from "../enums/entity.enums";
+import { WalletTransaction } from "./walletTransaction.entity";
 
 
 @Entity("wallet")
@@ -22,5 +23,8 @@ export class Wallet {
 
     @UpdateDateColumn()
     updatedAt!: Date;
+
+    @OneToMany(() => WalletTransaction, (transactions) => transactions.wallet)
+    transactions!: WalletTransaction[];
 
 }
