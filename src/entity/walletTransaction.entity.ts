@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Wallet } from "./wallet.entity";
 
 export enum TransactionType { Deposit = "deposit", Withdraw = "withdraw", Purchase = "purchase", Refund = "refund", AdminDeposit = "adminDeposit", AdminWithdraw = "adminWithdraw" }
 export enum TransactionStatus { Pending = "pending", Success = "success", Failed = "failed", Canceled = "canceled" }
@@ -32,5 +33,8 @@ export class WalletTransaction {
 
     @UpdateDateColumn()
     updatedAt!: Date;
+
+    @ManyToOne(() => Wallet, (wallet) => wallet.transactions)
+    wallet!: Wallet;
 
 }
