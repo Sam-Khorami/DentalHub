@@ -13,6 +13,7 @@ import { Product } from "./product.entity";
 import { Orders } from "./order.entity";
 import { Comments } from "./comments.entity";
 import { CommentLikes } from "./commentLikes.entity";
+import { Wallet } from "./wallet.entity";
 
 @Entity("user")
 export class User {
@@ -78,6 +79,9 @@ export class User {
 
     @OneToMany(() => CommentLikes, (likes) => likes.user)
     likes!: CommentLikes[];
+
+    @OneToOne(() => Wallet, (wallet) => wallet.user)
+    wallet!: Wallet;
 
     @BeforeInsert()
     async hashPassword () {
