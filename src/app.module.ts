@@ -38,6 +38,8 @@ import { LikesModule } from './likes/likes.module';
 import { Comments } from './entity/comments.entity';
 import { CommentLikes } from './entity/commentLikes.entity';
 import { CommentsModule } from './comments/comments.module';
+import { Wallet } from './entity/wallet.entity';
+import { WalletTransaction } from './entity/walletTransaction.entity';
 
 @Module({
   imports: [
@@ -53,7 +55,7 @@ import { CommentsModule } from './comments/comments.module';
       port: +process.env.DB_PORT!,
       password: process.env.DB_PASS,
       username: process.env.DB_USER,
-      entities: [User, Role, Permission, Ip, Profile, Requests, DoctorSchedule, Slots, Reservation, Books, Product, Category, Orders, Comments, CommentLikes]
+      entities: [User, Role, Permission, Ip, Profile, Requests, DoctorSchedule, Slots, Reservation, Books, Product, Category, Orders, Comments, CommentLikes, Wallet, WalletTransaction]
 
     }),
     CacheModule.registerAsync({
