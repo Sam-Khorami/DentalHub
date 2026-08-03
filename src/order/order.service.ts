@@ -2,7 +2,8 @@ import { BadRequestException, ConflictException, Injectable, NotFoundException }
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
 import { Repository } from 'typeorm';
-import { Orders, OrderStatusEnum } from '../entity/order.entity';
+import { Orders } from '../entity/order.entity';
+import { OrderStatusEnum } from "../enums/entity.enums";
 import { RedisService } from '../redis/redis.service';
 import { CartItem } from '../types/interfaces.type';
 import { Product } from '../entity/product.entity';
