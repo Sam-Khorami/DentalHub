@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
 import bcrypt from "bcrypt";
 import { RedisService } from '../redis/redis.service';
+import { Wallet } from '../entity/wallet.entity';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,7 @@ export class AuthService {
         @InjectRepository(User) private readonly userRepo: Repository<User>,
         @InjectRepository(Role) private readonly roleRepo: Repository<Role>,
         @InjectRepository(Permission) private readonly permissionRepo: Repository<Permission>,
+        @InjectRepository(Wallet) private readonly walletRepo: Repository<Wallet>,
         private readonly redisService: RedisService,
         private mailService: MailService,
         private jwtService: JwtService

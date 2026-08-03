@@ -12,6 +12,7 @@ import { MailModule } from '../mail/mail.module';
 import { MailService } from '../mail/mail.service';
 import { Permission } from '../entity/permission.entity';
 import { RedisModule } from '../redis/redis.module';
+import { Wallet } from '../entity/wallet.entity';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { RedisModule } from '../redis/redis.module';
       }),
 
     }),
-    TypeOrmModule.forFeature([User, Role, Permission]),
+    TypeOrmModule.forFeature([User, Role, Permission, Wallet]),
     MailModule,
     RedisModule
     
