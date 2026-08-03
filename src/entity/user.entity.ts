@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { BeforeInsert, Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Role } from "./role.entity";
 import { Permission } from "./permission.entity";
 import bcrypt from "bcrypt";
@@ -81,6 +81,7 @@ export class User {
     likes!: CommentLikes[];
 
     @OneToOne(() => Wallet, (wallet) => wallet.user)
+    @JoinColumn()
     wallet!: Wallet;
 
     @BeforeInsert()
