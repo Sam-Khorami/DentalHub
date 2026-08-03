@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { CurrencyEnum, WalletStatus } from "../enums/entity.enums";
 import { WalletTransaction } from "./walletTransaction.entity";
+import { User } from "./user.entity";
 
 
 @Entity("wallet")
@@ -26,5 +27,8 @@ export class Wallet {
 
     @OneToMany(() => WalletTransaction, (transactions) => transactions.wallet)
     transactions!: WalletTransaction[];
+
+    @OneToOne(() => User, (user) => user.wallet)
+    user!: User;
 
 }
