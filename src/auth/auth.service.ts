@@ -34,9 +34,13 @@ export class AuthService {
         const user = await this.userRepo.findOne({ where: { username: data.username } });
         if (user) throw new ConflictException("User already exists!");
 
+        // Generating A Wallet For User
+        const newWallet = this.walletRepo.create();
+        const wallet = await this.walletRepo.save(newWallet);
+
         // Getting Role & Generate New User
         const role = await this.roleRepo.findOne({ where: { name: "user" } });
-        const newUser = this.userRepo.create({ username: data.username, email: data.email, password: data.password, roles: [role!] });
+        const newUser = this.userRepo.create({ username: data.username, email: data.email, password: data.password, roles: [role!], wallet });
         await this.userRepo.save(newUser);
 
         // Generate Otp
