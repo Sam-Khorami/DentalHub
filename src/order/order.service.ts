@@ -77,7 +77,6 @@ export class OrderService {
         }
 
         const data = await this.zibalPaymentService.verifyPayment(trackId);
-        console.log("data in verify payment", data.amount); // 10000000 IRR
         cart.forEach(async (item) => {
 
             const product = await this.productRepo.findOne({ where: { id: item.productId } });
