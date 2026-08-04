@@ -30,7 +30,7 @@ export class OrderService {
         const user = await this.userRepo.findOne({ where: { id: userId } });
         if (!user) throw new NotFoundException("User Not Found!");
 
-        const order = await this.orderRepo.findOne({ where: { user: { id: userId } } });
+        const order = await this.orderRepo.findOne({ where: { user: { id: userId }, status: OrderStatusEnum.Pending } });
         if (order) throw new ConflictException("Order already exists please pay your order first!")
 
         let price = 0;
@@ -77,7 +77,7 @@ export class OrderService {
         }
 
         const data = await this.zibalPaymentService.verifyPayment(trackId);
-        
+        console.log("data in verify payment", data.amount); // 10000000 IRR
         cart.forEach(async (item) => {
 
             const product = await this.productRepo.findOne({ where: { id: item.productId } });
