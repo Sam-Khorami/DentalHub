@@ -40,6 +40,7 @@ import { CommentLikes } from './entity/commentLikes.entity';
 import { CommentsModule } from './comments/comments.module';
 import { Wallet } from './entity/wallet.entity';
 import { WalletTransaction } from './entity/walletTransaction.entity';
+import { WalletModule } from './wallet/wallet.module';
 
 @Module({
   imports: [
@@ -83,7 +84,8 @@ import { WalletTransaction } from './entity/walletTransaction.entity';
     OrderModule,
     ZibalPaymentModule,
     LikesModule,
-    CommentsModule
+    CommentsModule,
+    WalletModule
 
   ],
   controllers: [AppController],
