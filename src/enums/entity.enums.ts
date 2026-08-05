@@ -73,3 +73,20 @@ export enum WalletStatus {
     Closed = "closed",
     Blocked = "blocked"
 }
+
+
+export enum TransactionType { 
+    Deposit = "deposit", 
+    Withdraw = "withdraw", 
+    Purchase = "purchase", 
+    Refund = "refund", 
+    AdminDeposit = "adminDeposit", 
+    AdminWithdraw = "adminWithdraw" 
+}
+
+export enum TransactionStatus { 
+    Pending = "pending", 
+    Success = "success", 
+    Failed = "failed", 
+    Canceled = "canceled" 
+}
