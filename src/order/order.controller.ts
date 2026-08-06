@@ -1,7 +1,8 @@
-import { Body, Controller, Param, ParseIntPipe, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, ParseIntPipe, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwtAuth.guard';
+import { PaymentTypeDto } from './dto/paymentType.dto';
 
 @ApiTags("Order Management")
 @ApiBearerAuth()
@@ -20,10 +21,9 @@ export class OrderController {
   }
 
   @Post("start-payment")
-  async startPayment (@Req() request: Request) {
+  async startPayment (@Req() request: Request, @Query() query: PaymentTypeDto) {
 
-    const data = await this.orderService.startPayment(request);
-    return { data, paymentUrl: `https://gateway.zibal.ir/start/${data.trackId}` }
+    return await this.orderService.startPayment(request, query);
 
   }
 

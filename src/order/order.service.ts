@@ -9,6 +9,8 @@ import { CartItem } from '../types/interfaces.type';
 import { Product } from '../entity/product.entity';
 import { ZibalPaymentService } from '../zibal-payment/zibal-payment.service';
 import { MailService } from '../mail/mail.service';
+import { PaymentTypeDto, PaymentTypeEnum } from './dto/paymentType.dto';
+import { WalletService } from '../wallet/wallet.service';
 
 @Injectable()
 export class OrderService {
@@ -20,7 +22,8 @@ export class OrderService {
         @InjectRepository(Product) private readonly productRepo: Repository<Product>,
         private readonly zibalPaymentService: ZibalPaymentService,
         private readonly redisService: RedisService,
-        private readonly mailService: MailService
+        private readonly mailService: MailService,
+        private readonly walletService: WalletService
 
     ) {}
 
@@ -45,7 +48,7 @@ export class OrderService {
 
     }
 
-    async startPayment (request: Request) {
+    async startPayment (request: Request, query: PaymentTypeDto) {
 
         const userId = request["user"].userId;
         const user = await this.userRepo.findOne({ where: { id: userId } });
@@ -54,8 +57,19 @@ export class OrderService {
         const order = await this.orderRepo.findOne({ where: { user: { id: userId }, status: OrderStatusEnum.Pending } });
         if (!order) throw new NotFoundException("Order Not Found!");
 
-        const data = await this.zibalPaymentService.requestPayment(order.totalPrice);
-        return data;
+        if (query.type === PaymentTypeEnum.PaymentGateway) {
+
+            const data = await this.zibalPaymentService.requestPayment(order.totalPrice);
+            return { data, paymentUrl: `https://gateway.zibal.ir/start/${data.trackId}` };
+
+        }
+
+        else {
+
+            await this.walletService.purchase(order.totalPrice, userId);
+            return { message: "The order payed successfully" }
+
+        }
 
     }
 
