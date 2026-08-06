@@ -8,6 +8,7 @@ import { Product } from '../entity/product.entity';
 import { RedisModule } from '../redis/redis.module';
 import { ZibalPaymentModule } from '../zibal-payment/zibal-payment.module';
 import { MailModule } from '../mail/mail.module';
+import { WalletModule } from '../wallet/wallet.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { MailModule } from '../mail/mail.module';
     TypeOrmModule.forFeature([User, Product, Orders]),
     RedisModule,
     MailModule,
-    ZibalPaymentModule
+    ZibalPaymentModule,
+    WalletModule
 
   ],
   controllers: [OrderController],
