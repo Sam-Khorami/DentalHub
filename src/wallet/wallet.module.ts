@@ -16,5 +16,6 @@ import { ZibalPaymentModule } from '../zibal-payment/zibal-payment.module';
   ],
   controllers: [WalletController],
   providers: [WalletService],
+  exports: [WalletService]
 })
 export class WalletModule {}
