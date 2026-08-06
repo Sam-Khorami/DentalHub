@@ -1,8 +1,7 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Wallet } from "./wallet.entity";
+import { TransactionType, TransactionStatus } from "../enums/entity.enums";
 
-export enum TransactionType { Deposit = "deposit", Withdraw = "withdraw", Purchase = "purchase", Refund = "refund", AdminDeposit = "adminDeposit", AdminWithdraw = "adminWithdraw" }
-export enum TransactionStatus { Pending = "pending", Success = "success", Failed = "failed", Canceled = "canceled" }
 
 @Entity("wallet_transaction")
 export class WalletTransaction {
